@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>適性選択</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>適性選択</h1>
+    </header>
+    <main>
+        <!-- 個体選択フォーム -->
+        <section id="selection-section">
+            <h2>個体を選択してください</h2>
+
+            <!-- 個体1 -->
+            <div class="individual-select">
+                <label for="individual1">個体1:</label>
+                <select id="individual1" onchange="displayAptitude('individual1', 'display1')">
+                    <option value="">-- 選択してください --</option>
+                </select>
+                <div id="display1" class="aptitude-display"></div>
+            </div>
+
+            <!-- 個体2 -->
+            <div class="individual-select">
+                <label for="individual2">個体2:</label>
+                <select id="individual2" onchange="displayAptitude('individual2', 'display2')">
+                    <option value="">-- 選択してください --</option>
+                </select>
+                <div id="display2" class="aptitude-display"></div>
+            </div>
+
+            <!-- 個体3 -->
+            <div class="individual-select">
+                <label for="individual3">個体3:</label>
+                <select id="individual3" onchange="displayAptitude('individual3', 'display3')">
+                    <option value="">-- 選択してください --</option>
+                </select>
+                <div id="display3" class="aptitude-display"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 適性選択アプリケーション</p>
+    </footer>
+
+    <!-- JavaScriptファイルを読み込む -->
+    <script src="script.js"></script>
+</body>
+</html>

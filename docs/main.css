@@ -1,0 +1,48 @@
+/* 基本スタイル */
+body {
+    font-family: monospace, sans-serif; /* 等幅フォント */
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+header {
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    padding: 1em;
+}
+
+main {
+    padding: 2em;
+}
+
+.individual-select {
+    margin-bottom: 1.5em;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5em;
+}
+
+select {
+    width: 100%;
+}
+
+.aptitude-display {
+    margin-top: 0.5em;
+}
+
+/* テーブルスタイル */
+table {
+    border-collapse: collapse; /* セル間の隙間をなくす */
+    width: 100%;
+}
+
+table th, table td {
+    border: 1px solid #000; /* 黒色の罫線を追加 */
+    padding: 0.5em;
+    text-align: center; /* 中央揃え */
+}
+

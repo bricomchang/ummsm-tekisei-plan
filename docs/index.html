@@ -3,49 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>適性選択</title>
+    <title>血統表</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
-        <h1>適性選択</h1>
+        <h1>血統表</h1>
     </header>
-    <main>
-        <!-- 個体選択フォーム -->
-        <section id="selection-section">
-            <h2>個体を選択してください</h2>
+    <main id="pedigree-table">
+        <!-- 高祖父母 -->
+        <section class="generation high-great-grandparents">
+            <h2>高祖父母 (8人)</h2>
+            <div class="individuals" id="high-great-grandparents"></div>
+        </section>
 
-            <!-- 個体1 -->
-            <div class="individual-select">
-                <label for="individual1">個体1:</label>
-                <select id="individual1" onchange="displayAptitude('individual1', 'display1')">
-                    <option value="">-- 選択してください --</option>
-                </select>
-                <div id="display1" class="aptitude-display"></div>
-            </div>
+        <!-- 曾祖父母 -->
+        <section class="generation great-grandparents">
+            <h2>曾祖父母 (4人)</h2>
+            <div class="individuals" id="great-grandparents"></div>
+        </section>
 
-            <!-- 個体2 -->
-            <div class="individual-select">
-                <label for="individual2">個体2:</label>
-                <select id="individual2" onchange="displayAptitude('individual2', 'display2')">
-                    <option value="">-- 選択してください --</option>
-                </select>
-                <div id="display2" class="aptitude-display"></div>
-            </div>
+        <!-- 祖父母 -->
+        <section class="generation grandparents">
+            <h2>祖父母 (2人)</h2>
+            <div class="individuals" id="grandparents"></div>
+        </section>
 
-            <!-- 個体3 -->
-            <div class="individual-select">
-                <label for="individual3">個体3:</label>
-                <select id="individual3" onchange="displayAptitude('individual3', 'display3')">
-                    <option value="">-- 選択してください --</option>
-                </select>
-                <div id="display3" class="aptitude-display"></div>
-            </div>
+        <!-- 親 -->
+        <section class="generation parent">
+            <h2>親 (1人)</h2>
+            <div class="individuals" id="parent"></div>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2025 適性選択アプリケーション</p>
+        <p>&copy; 2025 血統表アプリケーション</p>
     </footer>
 
     <!-- JavaScriptファイルを読み込む -->

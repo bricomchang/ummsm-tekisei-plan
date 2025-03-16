@@ -66,7 +66,7 @@ const pedigreePositions = [
   document.addEventListener('DOMContentLoaded', async function() {
     try {
       // JSONデータの読み込み
-      const response = await fetch('docs/umadata.json');
+      const response = await fetch('../docs/umadata.json');
       horseData = await response.json();
       console.log('馬データを読み込みました');
       

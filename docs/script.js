@@ -86,14 +86,15 @@ const pedigreePositions = [
       } else {
         console.error('計算ボタンが見つかりません。HTML内のID名を確認してください。');
       }
-      
+
+        /*
       // テストボタンのイベントリスナー設定
       const testButton = document.getElementById('test-button');
       if (testButton) {
         testButton.addEventListener('click', fillRandomData);
       } else {
         console.error('テストボタンが見つかりません。HTML内のID名を確認してください。');
-      }
+      }*/
     } catch (error) {
       console.error('データ読み込みエラー:', error);
       alert('データの読み込みに失敗しました。ページを再読み込みしてください。');

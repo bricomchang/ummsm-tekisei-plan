@@ -1,50 +1,137 @@
+/* 全体レイアウト */
 body {
-    font-family: 'Meiryo', sans-serif;
-    margin: 0;
-    padding: 20px;
-    background-color: #f5f5f5;
-  }
-  
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  h1 {
-    text-align: center;
-    color: #333;
-  }
-  
-  /* フォームスタイル */
-  /* 元のHTMLに合わせてカスタマイズ */
-  
-  /* 結果テーブルスタイル */
-  .results-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
-  
-  .results-table th, .results-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-  }
-  
-  .results-table th {
-    background-color: #f2f2f2;
-  }
-  
-  /* 適性ランクのスタイル */
-  .rank-A { background-color: #ffcccc; }
-  .rank-B { background-color: #ffe6cc; }
-  .rank-C { background-color: #ffffcc; }
-  .rank-D { background-color: #e6ffcc; }
-  .rank-E { background-color: #ccffcc; }
-  .rank-F { background-color: #ccffe6; }
-  .rank-G { background-color: #ccffff; }
-  
+  font-family: 'Meiryo', sans-serif;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* 血統表レイアウト */
+.pedigree-container {
+  display: flex;
+  overflow-x: auto;
+  white-space: nowrap;
+  margin-bottom: 20px;
+}
+
+.pedigree-row {
+  display: flex;
+  align-items: flex-start;
+}
+
+.pedigree-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.pedigree-box {
+  border: 1px solid #ccc;
+  background-color: #fff;
+  padding: 10px;
+  margin: 5px;
+  min-width: 200px;
+  min-height: 150px;
+  position: relative;
+}
+
+.pedigree-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+/* 入力要素スタイル */
+select {
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 8px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+.stars-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.stars-group label {
+  display: flex;
+  align-items: center;
+  font-size: 0.9em;
+}
+
+/* 適性表示スタイル */
+.aptitude-display {
+  margin-top: 10px;
+  display: none;
+  font-size: 0.9em;
+}
+
+.aptitude-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 3px;
+}
+
+.apt-label {
+  font-weight: bold;
+  margin-right: 2px;
+}
+
+.apt-value {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  text-align: center;
+  border-radius: 3px;
+}
+
+/* ランク表示の背景色 */
+.rank-A { background-color: #ffcccc; }
+.rank-B { background-color: #ffe6cc; }
+.rank-C { background-color: #ffffcc; }
+.rank-D { background-color: #e6ffcc; }
+.rank-E { background-color: #ccffcc; }
+.rank-F { background-color: #ccffe6; }
+.rank-G { background-color: #ccffff; }
+
+/* ボタンスタイル */
+.copy-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: #e0e0e0;
+  border: none;
+  padding: 3px 8px;
+  font-size: 0.8em;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.copy-button:hover {
+  background-color: #d0d0d0;
+}
+
+#calculate-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin: 20px auto;
+  display: block;
+}
+
+#calculate-button:hover {
+  background-color: #45a049;
+}

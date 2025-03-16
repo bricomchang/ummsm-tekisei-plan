@@ -1,0 +1,50 @@
+body {
+    font-family: 'Meiryo', sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f5f5f5;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+  
+  /* フォームスタイル */
+  /* 元のHTMLに合わせてカスタマイズ */
+  
+  /* 結果テーブルスタイル */
+  .results-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .results-table th, .results-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  .results-table th {
+    background-color: #f2f2f2;
+  }
+  
+  /* 適性ランクのスタイル */
+  .rank-A { background-color: #ffcccc; }
+  .rank-B { background-color: #ffe6cc; }
+  .rank-C { background-color: #ffffcc; }
+  .rank-D { background-color: #e6ffcc; }
+  .rank-E { background-color: #ccffcc; }
+  .rank-F { background-color: #ccffe6; }
+  .rank-G { background-color: #ccffff; }
+  

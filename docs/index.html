@@ -1,46 +1,27 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>血統表</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>血統適性計算機</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>血統表</h1>
-    </header>
-    <main id="pedigree-table">
-        <!-- 高祖父母 -->
-        <section class="generation high-great-grandparents">
-            <h2>高祖父母 (8人)</h2>
-            <div class="individuals" id="high-great-grandparents"></div>
-        </section>
-
-        <!-- 曾祖父母 -->
-        <section class="generation great-grandparents">
-            <h2>曾祖父母 (4人)</h2>
-            <div class="individuals" id="great-grandparents"></div>
-        </section>
-
-        <!-- 祖父母 -->
-        <section class="generation grandparents">
-            <h2>祖父母 (2人)</h2>
-            <div class="individuals" id="grandparents"></div>
-        </section>
-
-        <!-- 親 -->
-        <section class="generation parent">
-            <h2>親 (1人)</h2>
-            <div class="individuals" id="parent"></div>
-        </section>
-    </main>
-
-    <footer>
-        <p>&copy; 2025 血統表アプリケーション</p>
-    </footer>
-
-    <!-- JavaScriptファイルを読み込む -->
-    <script src="script.js"></script>
+  <div class="container">
+    <h1>血統適性計算機</h1>
+    
+    <form id="aptitudeForm">
+      <!-- ここに元のHTMLの入力フォーム部分を配置 -->
+      <!-- 個体選択用のプルダウン等を配置 -->
+      
+      <button type="button" id="calculateButton">計算する</button>
+    </form>
+    
+    <div id="results">
+      <!-- 計算結果表示エリア -->
+    </div>
+  </div>
+  
+  <script src="script.js"></script>
 </body>
 </html>

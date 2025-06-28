@@ -9,39 +9,13 @@
 <body>
     <h1>因子作り支援・ウマ娘適性計算機</h1>
 
-    <!-- リセットボタンをページタイトル下に移動 -->
     <div class="top-controls-container">
-        <button id="reset-button">入力内容をリセット</button>
+        <button id="reset">入力内容をリセット</button>
+        <button id="calculate">計算する</button>
     </div>
 
-    <!-- 血統表フォーム -->
-    <form id="pedigree-form">
-        <div id="pedigreeGrid" class="pedigree-grid-container"></div>
-    </form>
-    
-    <!-- 操作エリアを血統表の下に集約 -->
-    <div class="bottom-controls-container">
-        <!-- 計算ボタンをここに配置 -->
-        <button id="calculate-button">計算する</button>
-
-        <!-- インポート/エクスポートセクション -->
-        <div class="import-export-section">
-            <div class="import-group">
-                <textarea id="import-data-input" placeholder="エクスポートしたデータをここに貼り付けてインポート"></textarea>
-                <button id="import-button">インポート</button>
-            </div>
-            
-            <div id="export-container" style="display:none;">
-                <h2>データのエクスポート</h2>
-                <p>以下のテキストをコピーして保存することで、後からインポートして再現できます。</p>
-                <textarea id="export-data-output" readonly></textarea>
-                <button id="copy-export-button">クリップボードへコピー</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- 計算結果表示エリア -->
-    <div id="results" class="results-container" style="display:none;"></div>
+    <div id="pedigreeGrid" class="pedigree-grid-container"></div>
+    <div id="resultsContainer" class="results-container" style="display: none;"></div>
 
     <script src="script.js"></script>
 </body>

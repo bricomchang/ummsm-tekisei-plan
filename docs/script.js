@@ -47,6 +47,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             let span = 1;
             if (p.gen === 1) span = 16; else if (p.gen === 2) span = 8; else if (p.gen === 3) span = 4; else if (p.gen === 4) span = 2;
             cell.style.gridRow = `${p.row} / span ${span}`;
+            // ★★★★★ 修正箇所 ★★★★★
+            // 世代(gen)に基づいて正しい列(column)を設定
+            cell.style.gridColumn = 6 - p.gen;
+            
             let content = `<div class="pedigree-cell-title"></div>`;
             content += `<select class="individual-select" data-position="${p.pos}"><option value="">選択してください</option></select>`;
             if (p.displayFactor) {
@@ -193,7 +197,6 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     function generateGenePotentialHTML(genePotentials) {
         if (genePotentials.length === 0) return '<div class="gene-potentials-placeholder"></div>';
-        // 「遺伝子付与可能性」の文言を削除
         let html = '<div class="gene-potentials">';
         genePotentials.forEach(gene => {
             if (gene.status === 'confirmed') {
@@ -255,6 +258,9 @@ document.addEventListener('DOMContentLoaded', async function() {
             let span = 1;
             if (p.gen === 1) span = 16; else if (p.gen === 2) span = 8; else if (p.gen === 3) span = 4; else if (p.gen === 4) span = 2;
             cell.style.gridRow = `${p.row} / span ${span}`;
+            // ★★★★★ 修正箇所 ★★★★★
+            // 世代(gen)に基づいて正しい列(column)を設定
+            cell.style.gridColumn = 6 - p.gen;
             
             const horseName = formData['horse_' + p.pos];
             let nameHTML = `<div class="individual-name">${horseName || (p.pos === 31 ? '未指定' : '')}</div>`;
@@ -273,7 +279,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 const genePotentials = calculateGenePotential(p.pos, formData);
                 geneHTML = generateGenePotentialHTML(genePotentials);
             } else {
-                // 4, 5代目は空のプレースホルダーを追加して高さを揃える
                 tableHTML = '<div class="aptitude-table-placeholder"></div>';
                 geneHTML = '<div class="gene-potentials-placeholder"></div>';
             }

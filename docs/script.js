@@ -7,15 +7,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         {gen: 4, pos: 3, label: '父方祖父の父', row: 1, displayFactor: true}, {gen: 4, pos: 6, label: '父方祖父の母', row: 3, displayFactor: true}, {gen: 4, pos: 10, label: '父方祖母の父', row: 5, displayFactor: true}, {gen: 4, pos: 13, label: '父方祖母の母', row: 7, displayFactor: true}, {gen: 4, pos: 18, label: '母方祖父の父', row: 9, displayFactor: true}, {gen: 4, pos: 21, label: '母方祖父の母', row: 11, displayFactor: true}, {gen: 4, pos: 25, label: '母方祖母の父', row: 13, displayFactor: true}, {gen: 4, pos: 28, label: '母方祖母の母', row: 15, displayFactor: true},
         {gen: 5, pos: 1, label: '父方祖父の父の父', row: 1, displayFactor: true}, {gen: 5, pos: 2, label: '父方祖父の父の母', row: 2, displayFactor: true}, {gen: 5, pos: 4, label: '父方祖父の母の父', row: 3, displayFactor: true}, {gen: 5, pos: 5, label: '父方祖父の母の母', row: 4, displayFactor: true}, {gen: 5, pos: 8, label: '父方祖母の父の父', row: 5, displayFactor: true}, {gen: 5, pos: 9, label: '父方祖母の父の母', row: 6, displayFactor: true}, {gen: 5, pos: 11, label: '父方祖母の母の父', row: 7, displayFactor: true}, {gen: 5, pos: 12, label: '父方祖母の母の母', row: 8, displayFactor: true}, {gen: 5, pos: 16, label: '母方祖父の父の父', row: 9, displayFactor: true}, {gen: 5, pos: 17, label: '母方祖父の父の母', row: 10, displayFactor: true}, {gen: 5, pos: 19, label: '母方祖父の母の父', row: 11, displayFactor: true}, {gen: 5, pos: 20, label: '母方祖父の母の母', row: 12, displayFactor: true}, {gen: 5, pos: 23, label: '母方祖母の父の父', row: 13, displayFactor: true}, {gen: 5, pos: 24, label: '母方祖母の父の母', row: 14, displayFactor: true}, {gen: 5, pos: 26, label: '母方祖母の母の父', row: 15, displayFactor: true}, {gen: 5, pos: 27, label: '母方祖母の母の母', row: 16, displayFactor: true}
     ];
-    const displayResultPositions = [31, 15, 30, 7, 14, 22, 29];
     const factorTypes = ['芝', 'ダート', '短距離', 'マイル', '中距離', '長距離', '逃げ', '先行', '差し', '追込'];
     const aptitudeRanks = ['G', 'F', 'E', 'D', 'C', 'B', 'A'];
-    const APTITUDE_GROUPS = [
-        [{key: '芝', label: '芝'}, {key: 'ダート', label: 'ダ'}],
-        [{key: '短距離', label: '短'}, {key: 'マイル', label: 'マ'}],
-        [{key: '中距離', label: '中'}, {key: '長距離', label: '長'}],
-        [{key: '逃げ', label: '逃'}, {key: '先行', label: '先'}],
-        [{key: '差し', label: '差'}, {key: '追込', label: '追'}]
+    // 適性表のレイアウト定義
+    const APTITUDE_LAYOUT = [
+        { title: 'バ場適性', types: [{ key: '芝' }, { key: 'ダート' }] },
+        { title: '距離適性', types: [{ key: '短距離' }, { key: 'マイル' }, { key: '中距離' }, { key: '長距離' }] },
+        { title: '脚質適性', types: [{ key: '逃げ' }, { key: '先行' }, { key: '差し' }, { key: '追込' }] }
     ];
     let horseData = [];
     const LOCAL_STORAGE_KEY = 'umamusumePedigreeData';
@@ -57,9 +55,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (p.gen === 1) span = 16; else if (p.gen === 2) span = 8; else if (p.gen === 3) span = 4; else if (p.gen === 4) span = 2;
             cell.style.gridRow = `${p.row} / span ${span}`;
             
-            // 続柄表記は削除
             let content = `<div class="pedigree-cell-title"></div>`;
-
             content += `<select class="individual-select" data-position="${p.pos}"><option value="">選択してください</option></select>`;
 
             if (p.displayFactor) {
@@ -73,17 +69,14 @@ document.addEventListener('DOMContentLoaded', async function() {
                 content += `</div>`;
             }
 
-            // 3代目まで適性表を表示
             if (p.gen <= 3) {
                 content += `<div class="aptitude-display" data-position="${p.pos}"></div>`;
             }
-
             cell.innerHTML = content;
             container.appendChild(cell);
         });
     }
 
-    // ウマ娘選択ドロップダウンを初期化
     function initializeDropdowns() {
         const selects = document.querySelectorAll('.individual-select');
         selects.forEach(select => {
@@ -96,19 +89,20 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
     
-    // 適性表示テーブルを生成する共通関数
-    function createAptitudeTableHTML(horseName) {
+    // 指定された3段組レイアウトで適性表のHTMLを生成
+    function createAptitudeTableHTML(horseName, calculatedRanks = {}) {
         const horse = horseData.find(h => h['名前'] === horseName);
         if (!horse) return '';
         
         let html = '<table class="aptitude-table">';
-        APTITUDE_GROUPS.forEach(group => {
-            html += '<tr>';
-            group.forEach(apt => {
-                const rank = horse[apt.key] || 'G';
-                html += `<td class="apt-label">${apt.label}</td><td class="apt-value rank-${rank}">${rank}</td>`;
+        APTITUDE_LAYOUT.forEach(group => {
+            html += `<tr><td class="apt-label">${group.title}</td><td>`;
+            group.types.forEach(apt => {
+                const finalRank = calculatedRanks[apt.key]?.final || horse[apt.key] || 'G';
+                const changedClass = calculatedRanks[apt.key]?.changed ? ' changed' : '';
+                html += `<span class="apt-value rank-${finalRank}${changedClass}">${finalRank}</span>`;
             });
-            html += '</tr>';
+            html += '</td></tr>';
         });
         html += '</table>';
         return html;
@@ -123,7 +117,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
-    // LocalStorageへ保存
     function saveState() {
         const state = {};
         inputPedigreePositions.forEach(p => {
@@ -140,7 +133,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
     }
 
-    // LocalStorageから復元
     function loadState() {
         const savedState = localStorage.getItem(LOCAL_STORAGE_KEY);
         if (!savedState) return;
@@ -161,7 +153,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
-    // 計算ロジック
     function calculate() {
         const resultsContainer = document.getElementById('resultsContainer');
         resultsContainer.style.display = 'block';
@@ -186,57 +177,55 @@ document.addEventListener('DOMContentLoaded', async function() {
         const mainHorseName = document.querySelector('.individual-select[data-position="31"]')?.value;
         const mainHorseData = horseData.find(h => h['名前'] === mainHorseName);
 
-        // 結果表示
-        displayResultPositions.forEach(pos => {
+        // 本人のみ適性計算
+        const calculatedRanksForMain = {};
+        if (mainHorseData) {
+            factorTypes.forEach(type => {
+                const baseRankIndex = aptitudeRanks.indexOf(mainHorseData[type] || 'G');
+                let increase = 0;
+                const stars = factorCounts[type];
+                if (stars >= 10) increase = 4;
+                else if (stars >= 7) increase = 3;
+                else if (stars >= 4) increase = 2;
+                else if (stars >= 1) increase = 1;
+                
+                const newRankIndex = Math.min(baseRankIndex + increase, aptitudeRanks.length - 1);
+                calculatedRanksForMain[type] = {
+                    final: aptitudeRanks[newRankIndex],
+                    changed: newRankIndex > baseRankIndex
+                };
+            });
+        }
+        
+        // 5世代分の結果表示
+        inputPedigreePositions.forEach(p => {
             const cell = document.createElement('div');
-            const pData = inputPedigreePositions.find(p => p.pos === pos);
-            cell.className = `result-cell gen${pData.gen}`;
+            cell.className = `result-cell gen${p.gen}`;
             let span = 1;
-            if (pData.gen === 1) span = 16; else if (pData.gen === 2) span = 8; else if (pData.gen === 3) span = 4;
-            cell.style.gridRow = `${pData.row} / span ${span}`;
+            if (p.gen === 1) span = 16; else if (p.gen === 2) span = 8; else if (p.gen === 3) span = 4; else if (p.gen === 4) span = 2;
+            cell.style.gridRow = `${p.row} / span ${span}`;
             
-            const horseName = document.querySelector(`.individual-select[data-position="${pos}"]`)?.value;
-            const horseInfo = horseData.find(h => h['名前'] === horseName);
-            
-            let nameHTML = `<div class="individual-name">${horseName || (pos === 31 ? '未指定' : '')}</div>`;
+            const horseName = document.querySelector(`.individual-select[data-position="${p.pos}"]`)?.value;
+            let nameHTML = `<div class="individual-name">${horseName || (p.pos === 31 ? '未指定' : '')}</div>`;
             let tableHTML = '';
             
-            if (pos === 31 && mainHorseData) { // 本人のみ計算結果を反映
-                tableHTML = '<table class="aptitude-table">';
-                APTITUDE_GROUPS.forEach(group => {
-                    tableHTML += '<tr>';
-                    group.forEach(apt => {
-                        const baseRankIndex = aptitudeRanks.indexOf(mainHorseData[apt.key] || 'G');
-                        let increase = 0;
-                        const stars = factorCounts[apt.key];
-                        if (stars >= 10) increase = 4;
-                        else if (stars >= 7) increase = 3;
-                        else if (stars >= 4) increase = 2;
-                        else if (stars >= 1) increase = 1;
-                        
-                        const newRankIndex = Math.min(baseRankIndex + increase, aptitudeRanks.length - 1);
-                        const newRank = aptitudeRanks[newRankIndex];
-                        const changedClass = newRankIndex > baseRankIndex ? ' changed' : '';
-                        
-                        tableHTML += `<td class="apt-label">${apt.label}</td><td class="apt-value rank-${newRank}${changedClass}">${newRank}</td>`;
-                    });
-                    tableHTML += '</tr>';
-                });
-                tableHTML += '</table>';
-            } else if (horseInfo) {
-                tableHTML = createAptitudeTableHTML(horseName);
+            if (p.gen <= 3) {
+                if (p.pos === 31) {
+                    tableHTML = createAptitudeTableHTML(horseName, calculatedRanksForMain);
+                } else {
+                    tableHTML = createAptitudeTableHTML(horseName);
+                }
             }
-            
-            const factor = document.querySelector(`.factor-select[data-position="${pos}"]`)?.value;
-            const star = document.querySelector(`input[name="stars_${pos}"]:checked`)?.value;
-            let factorHTML = (pos !== 31 && factor && star) ? `<div class="factor-info">${factor} ☆${star}</div>` : '';
+
+            const factor = document.querySelector(`.factor-select[data-position="${p.pos}"]`)?.value;
+            const star = document.querySelector(`input[name="stars_${p.pos}"]:checked`)?.value;
+            let factorHTML = (p.displayFactor && factor && star) ? `<div class="factor-info">${factor} ☆${star}</div>` : '';
 
             cell.innerHTML = nameHTML + tableHTML + factorHTML;
             resultsGrid.appendChild(cell);
         });
     }
     
-    // イベントリスナー設定
     function setupEventListeners() {
         document.getElementById('calculate').addEventListener('click', calculate);
         document.getElementById('reset').addEventListener('click', () => {
@@ -247,7 +236,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 document.getElementById('resultsContainer').style.display = 'none';
             }
         });
-
         document.getElementById('pedigreeGrid').addEventListener('change', (e) => {
             if (e.target.matches('.individual-select, .factor-select, input[type="radio"]')) {
                 if (e.target.matches('.individual-select')) {
@@ -259,7 +247,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
-    // 初期化処理
     try {
         horseData = await loadCSV();
         createPedigreeGrid();

@@ -208,18 +208,19 @@ select, .individual-select, .factor-select {
     display: inline-block;
     text-align: center;
     border-radius: 3px;
-    color: #333;
+    color: #fff; /* 背景色が濃いため文字色を白に */
     font-weight: bold;
+    font-size: 0.9em;
 }
 
-/* ランク表示の背景色 */
-.rank-A { background-color: #ffcccc; }
-.rank-B { background-color: #ffe6cc; }
-.rank-C { background-color: #ffffcc; }
-.rank-D { background-color: #e6ffcc; }
-.rank-E { background-color: #ccffcc; }
-.rank-F { background-color: #ccffe6; }
-.rank-G { background-color: #ccffff; }
+/* ★★★★★ ランク表示の背景色（修正箇所） ★★★★★ */
+.rank-A { background-color: #FFA500; } /* オレンジ */
+.rank-B { background-color: #FF0000; } /* 赤 */
+.rank-C { background-color: #008000; } /* 緑 */
+.rank-D { background-color: #0000FF; } /* 青 */
+.rank-E { background-color: #800080; } /* 紫 */
+.rank-F { background-color: #000080; } /* 紺 */
+.rank-G { background-color: #808080; } /* グレー */
 
 /* コピーボタン */
 .copy-button {
@@ -239,7 +240,7 @@ select, .individual-select, .factor-select {
     background-color: #e0e0e0;
 }
 
-/* 結果表示エリア */
+/* ★★★★★ 結果表示エリア（修正・追加箇所） ★★★★★ */
 .results-container {
     max-width: 1200px;
     margin: 20px auto;
@@ -249,73 +250,87 @@ select, .individual-select, .factor-select {
     border-radius: 8px;
 }
 
-/* 結果表示内の血統表グリッド（結果表示用） */
-.results-container .pedigree-grid-container {
-    background: none; /* 結果表示では背景色をなくす */
-    border: none; /* 罫線もなし */
-    padding: 0;
+/* 結果表示用の血統表グリッド */
+.results-grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 祖父母, 親, 本人の3列 */
+    grid-template-rows: repeat(4, auto);   /* 祖父母世代は4行 */
+    gap: 10px;
+    margin: 20px auto;
+    padding: 10px;
+    background-color: #f0f8ff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
 }
 
-/* 結果表示内の個々のセル */
-.results-container .pedigree-cell {
-    border: 1px solid #eee; /* 薄い罫線 */
-    box-shadow: none; /* 影なし */
-    padding: 5px; /* パディングを少し減らす */
-    min-width: unset; /* 最小幅を解除 */
-    display: flex; /* Flexboxで内容を縦並びにする */
+.results-grid-container .pedigree-cell {
+    border: 1px solid #ccc;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     text-align: center;
+    gap: 5px;
 }
 
-.results-container .pedigree-cell-title {
-    margin-bottom: 2px;
-    font-size: 0.8em;
+.results-grid-container .pedigree-cell-title {
+    font-weight: bold;
+    color: #003366;
+    font-size: 1.1em;
+    margin-bottom: 5px;
 }
 
-.results-container .aptitude-display {
+.results-grid-container .aptitude-display {
     border: none;
     padding: 0;
     background-color: transparent;
+    display: block; /* 常時表示 */
+    width: 100%;
 }
 
-.results-container .aptitude-group {
-    grid-template-columns: repeat(2, 1fr); /* 2列表示に */
-    gap: 2px;
+.results-grid-container .aptitude-group {
+    display: grid;
+    grid-template-columns: repeat(2, auto); /* 2列で自動幅 */
+    gap: 3px 8px; /* 縦横の隙間 */
+    justify-content: center; /* 中央揃え */
+    padding-bottom: 3px;
 }
 
-.results-container .apt-label {
-    font-size: 0.75em;
-}
-
-.results-container .apt-value {
-    font-size: 0.75em;
-    width: 16px;
-    height: 16px;
-    line-height: 16px;
+.results-grid-container .aptitude-item {
+    font-size: 0.9em;
 }
 
 /* 補正された適性の色 */
 .aptitude-value.changed {
-    color: red;
+    color: yellow; /* 変更された適性の文字色 */
     font-weight: bold;
+    text-shadow: 1px 1px 2px black; /* 視認性向上のための影 */
 }
 
 /* 遺伝子付与可能性の表示スタイル */
 .gene-potential {
-    margin-top: 5px;
-    font-size: 0.75em;
-    line-height: 1.2;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #ccc;
+    font-size: 0.9em;
+    line-height: 1.4;
+    width: 100%;
 }
 
 .gene-potential strong {
-    color: #0056b3; /* 確定した因子は強調 */
+    color: #d9534f; /* 確定した因子は強調 */
 }
 
-/* 血統表の世代ごとの色分け */
-.gen1 { background-color: #e6f7ff; } /* 本人 */
-.gen2 { background-color: #d9edf7; } /* 親 */
-.gen3 { background-color: #cce9f5; } /* 祖父母 */
-.gen4 { background-color: #bfdaef; } /* 曾祖父母 */
-.gen5 { background-color: #b2cbe9; } /* 高祖父母 */
+.factor-explanation {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    font-size: 0.9em;
+}

@@ -154,6 +154,8 @@ function setupControlButtons() {
 
 function displayBaseAptitude(name, pos) {
     const displayDiv = document.getElementById(`aptitude-display-${pos}`);
+    if (!displayDiv) return;
+    
     if (!name) {
         displayDiv.innerHTML = '';
         return;
@@ -195,47 +197,87 @@ function calculateAptitude(baseRank, factorValue) {
 
 function saveStateToLocalStorage() {
     const state = {};
-    // 全世代の入力情報を保存
+    // 全世代の入力情報を保存（エラーハンドリング強化）
     inputPedigreePositions.forEach(p => {
         const pos = p.pos;
         const individualSelect = document.getElementById(`individual-${pos}`);
-        if (!individualSelect) return;
-        const factorSelects = factorTypes.map(type => document.getElementById(`factor-${type}-${pos}`));
-        const starRadios = Array.from(document.querySelectorAll(`input[name="stars-${pos}"]:checked`));
+        if (!individualSelect) {
+            console.warn(`Individual select not found for position ${pos}`);
+            return;
+        }
+        
         state[pos] = {
-            individual: individualSelect.value,
+            individual: individualSelect.value || '',
             factors: {},
-            stars: starRadios.length > 0 ? parseInt(starRadios[0].value) : 0
+            stars: 0
         };
-        factorSelects.forEach((select, index) => {
-            if (select) {
-                const type = factorTypes[index];
-                state[pos].factors[type] = select.value;
+        
+        // 星の取得
+        const starRadios = document.querySelectorAll(`input[name="stars-${pos}"]:checked`);
+        if (starRadios.length > 0) {
+            state[pos].stars = parseInt(starRadios[0].value) || 0;
+        }
+        
+        // 因子の取得（エラーハンドリング追加）
+        factorTypes.forEach(type => {
+            const factorSelect = document.getElementById(`factor-${type}-${pos}`);
+            if (factorSelect) {
+                state[pos].factors[type] = factorSelect.value || '0';
+            } else {
+                state[pos].factors[type] = '0';
+                if (p.displayFactor) {
+                    console.warn(`Factor select not found for ${type} at position ${pos}`);
+                }
             }
         });
+        
+        console.log(`Saved data for position ${pos}:`, state[pos]);
     });
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
-    // エクスポート用データも更新
-    const exportContainer = document.getElementById('export-container');
-    const exportData = document.getElementById('export-data');
-    exportData.value = JSON.stringify(state);
-    exportContainer.style.display = 'block';
+    
+    try {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+        console.log('State saved to localStorage successfully');
+        
+        // エクスポート用データも更新
+        const exportContainer = document.getElementById('export-container');
+        const exportData = document.getElementById('export-data');
+        if (exportData) {
+            exportData.value = JSON.stringify(state);
+            if (exportContainer) {
+                exportContainer.style.display = 'block';
+            }
+        }
+    } catch (error) {
+        console.error('Failed to save state to localStorage:', error);
+    }
 }
 
 function loadStateFromLocalStorage() {
-    const savedState = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (!savedState) return;
-    const state = JSON.parse(savedState);
-    loadState(state);
+    try {
+        const savedState = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (!savedState) {
+            console.log('No saved state found');
+            return;
+        }
+        const state = JSON.parse(savedState);
+        console.log('Loading state from localStorage:', state);
+        loadState(state);
+    } catch (error) {
+        console.error('Failed to load state from localStorage:', error);
+    }
 }
 
 function importState() {
     const importArea = document.getElementById('import-area');
+    if (!importArea) return;
+    
     try {
         const state = JSON.parse(importArea.value);
+        console.log('Importing state:', state);
         loadState(state);
         saveStateToLocalStorage();
         importArea.value = '';
+        alert('データをインポートしました。');
     } catch (e) {
         alert('データの形式が正しくありません。');
         console.error("Import failed:", e);
@@ -243,71 +285,128 @@ function importState() {
 }
 
 function loadState(state) {
+    if (!state || typeof state !== 'object') {
+        console.warn('Invalid state data');
+        return;
+    }
+    
     Object.keys(state).forEach(posStr => {
         const pos = parseInt(posStr);
         const data = state[pos];
+        if (!data) return;
+        
+        console.log(`Loading data for position ${pos}:`, data);
+        
+        // 個体名の設定
         if (data.individual) {
             const indSelect = document.getElementById(`individual-${pos}`);
-            if(indSelect) {
+            if (indSelect) {
                 indSelect.value = data.individual;
-                if(pos === 31) displayBaseAptitude(data.individual, pos);
+                if (pos === 31) {
+                    displayBaseAptitude(data.individual, pos);
+                }
+            } else {
+                console.warn(`Individual select not found for position ${pos}`);
             }
         }
-        if (data.stars) {
+        
+        // 星の設定
+        if (data.stars && data.stars > 0) {
             const starRadio = document.querySelector(`input[name="stars-${pos}"][value="${data.stars}"]`);
-            if(starRadio) starRadio.checked = true;
+            if (starRadio) {
+                starRadio.checked = true;
+            } else {
+                console.warn(`Star radio not found for position ${pos}, value ${data.stars}`);
+            }
         }
-        if (data.factors) {
+        
+        // 因子の設定
+        if (data.factors && typeof data.factors === 'object') {
             factorTypes.forEach(type => {
-                const factorSelect = document.getElementById(`factor-${type}-${pos}`);
-                if (factorSelect && data.factors[type]) {
-                    factorSelect.value = data.factors[type];
+                if (data.factors[type] !== undefined) {
+                    const factorSelect = document.getElementById(`factor-${type}-${pos}`);
+                    if (factorSelect) {
+                        factorSelect.value = data.factors[type];
+                    } else {
+                        console.warn(`Factor select not found for ${type} at position ${pos}`);
+                    }
                 }
             });
         }
     });
+    
+    console.log('State loading completed');
 }
 
 function copyExportData() {
     const exportData = document.getElementById('export-data');
+    if (!exportData) return;
+    
     exportData.select();
-    document.execCommand('copy');
-    alert('クリップボードにコピーしました。');
+    try {
+        document.execCommand('copy');
+        alert('クリップボードにコピーしました。');
+    } catch (error) {
+        console.error('Copy failed:', error);
+        alert('コピーに失敗しました。手動でテキストを選択してコピーしてください。');
+    }
 }
 
 function calculateAndDisplayResults() {
     const resultsContainer = document.getElementById('resultsContainer');
     const pedigreeContainer = document.getElementById('resultsPedigreeContainer');
     const calculationInfo = document.getElementById('calculationInfo');
+    
+    if (!resultsContainer || !pedigreeContainer || !calculationInfo) {
+        console.error('Results containers not found');
+        return;
+    }
+    
     pedigreeContainer.innerHTML = '';
     calculationInfo.innerHTML = '';
 
     const selectedIndividuals = {};
     const selectedFactors = {};
     const selectedStars = {};
+    
+    // 全世代のデータを取得（エラーハンドリング強化）
     inputPedigreePositions.forEach(p => {
         const pos = p.pos;
         const individualSelect = document.getElementById(`individual-${pos}`);
+        
         if (individualSelect && individualSelect.value) {
             selectedIndividuals[pos] = individualSelect.value;
-            selectedStars[pos] = parseInt(document.querySelector(`input[name="stars-${pos}"]:checked`)?.value || '0');
+            
+            // 星の取得
+            const starRadio = document.querySelector(`input[name="stars-${pos}"]:checked`);
+            selectedStars[pos] = starRadio ? parseInt(starRadio.value) : 0;
+            
+            // 因子の取得
             selectedFactors[pos] = {};
             factorTypes.forEach(type => {
                 const factorSelect = document.getElementById(`factor-${type}-${pos}`);
-                if (factorSelect) selectedFactors[pos][type] = factorSelect.value;
+                selectedFactors[pos][type] = factorSelect ? (factorSelect.value || '0') : '0';
             });
         }
     });
 
+    console.log('Selected individuals:', selectedIndividuals);
+    console.log('Selected factors:', selectedFactors);
+    console.log('Selected stars:', selectedStars);
+
     if (!selectedIndividuals[31]) {
         resultsContainer.style.display = 'none';
+        alert('本人のウマ娘を選択してください。');
         return;
     }
     resultsContainer.style.display = 'block';
 
     const baseAptitudes = {};
     const baseHorse = horseData.find(h => h['名前'] === selectedIndividuals[31]);
-    if (!baseHorse) return;
+    if (!baseHorse) {
+        alert('選択されたウマ娘のデータが見つかりません。');
+        return;
+    }
     factorTypes.forEach(type => { baseAptitudes[type] = baseHorse[type] || 'G'; });
 
     const totalFactors = {};
@@ -325,19 +424,28 @@ function calculateAndDisplayResults() {
     };
 
     function getInheritanceFactor(pos, type) {
-        if (!selectedIndividuals[pos]) return 0;
+        // データが存在しない場合は0を返す
+        if (!selectedIndividuals[pos] || !selectedFactors[pos] || !selectedFactors[pos][type]) {
+            return 0;
+        }
+        
         const star = selectedStars[pos] || 0;
-        const factorValue = parseInt(selectedFactors[pos]?.[type] || '0');
+        const factorValue = parseInt(selectedFactors[pos][type]) || 0;
         let totalFactor = factorValue * star;
+        
         const parents = inheritanceMap[pos];
         if (parents) {
-            totalFactor += Math.floor((getInheritanceFactor(parents[0], type) + getInheritanceFactor(parents[1], type)) / 2);
+            const parent1Factor = getInheritanceFactor(parents[0], type);
+            const parent2Factor = getInheritanceFactor(parents[1], type);
+            totalFactor += Math.floor((parent1Factor + parent2Factor) / 2);
         }
+        
         return totalFactor;
     }
 
     factorTypes.forEach(type => {
         totalFactors[type] = getInheritanceFactor(15, type) + getInheritanceFactor(30, type);
+        console.log(`Total factor for ${type}: ${totalFactors[type]}`);
     });
 
     const finalAptitudes = {};
@@ -347,8 +455,13 @@ function calculateAndDisplayResults() {
         const factorValue = totalFactors[type] || 0;
         const finalRank = calculateAptitude(baseRank, factorValue);
         finalAptitudes[type] = finalRank;
-        if (baseRank !== finalRank) changedTypes[type] = true;
+        if (baseRank !== finalRank) {
+            changedTypes[type] = true;
+        }
     });
+
+    console.log('Final aptitudes:', finalAptitudes);
+    console.log('Changed types:', changedTypes);
 
     const labels = {'芝': '芝', 'ダート': 'ダ', '短距離': '短', 'マイル': 'マ', '中距離': '中', '長距離': '長', '逃げ': '逃', '先行': '先', '差し': '差', '追込': '追'};
     const turfHeader = `<td>${labels['芝']}</td><td>${labels['ダート']}</td>`;

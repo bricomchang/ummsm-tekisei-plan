@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             let span = 1;
             if (p.gen === 1) span = 16; else if (p.gen === 2) span = 8; else if (p.gen === 3) span = 4; else if (p.gen === 4) span = 2;
             cell.style.gridRow = `${p.row} / span ${span}`;
-            cell.style.gridColumn = 6 - p.gen;
+            cell.style.gridColumn = p.gen;
             
             let content = `<div class="pedigree-cell-title"></div>`;
             content += `<select class="individual-select" data-position="${p.pos}"><option value="">選択してください</option></select>`;
@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             let span = 1;
             if (p.gen === 1) span = 16; else if (p.gen === 2) span = 8; else if (p.gen === 3) span = 4; else if (p.gen === 4) span = 2;
             cell.style.gridRow = `${p.row} / span ${span}`;
-            cell.style.gridColumn = 6 - p.gen;
+            cell.style.gridColumn = p.gen;
             
             const horseName = formData['horse_' + p.pos];
             let nameHTML = `<div class="individual-name">${horseName || (p.pos === 31 ? '未指定' : '')}</div>`;

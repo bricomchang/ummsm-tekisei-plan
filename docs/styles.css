@@ -3,7 +3,7 @@ body {
     font-family: 'Meiryo', sans-serif;
     background-color: #f5f5f5;
     margin: 0;
-    padding: 10px;
+    padding: clamp(10px, 2vw, 20px); /* ウィンドウ幅に応じてパディングを調整 */
     color: #333;
 }
 
@@ -12,10 +12,16 @@ body {
     margin: 0 auto;
 }
 
-h1, h2 {
+h1 {
+    font-size: clamp(1.5rem, 4vw, 2.5rem); /* clampで見出しもスケーリング */
     text-align: center;
-    color: #333;
-    margin-bottom: 20px;
+    margin-bottom: clamp(15px, 3vw, 20px);
+}
+
+h2 {
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    text-align: center;
+    margin-bottom: clamp(10px, 2vw, 15px);
 }
 
 .top-controls-container {
@@ -30,8 +36,8 @@ button {
     background-color: #007bff;
     color: white;
     border: none;
-    padding: 10px 15px;
-    font-size: 14px;
+    padding: clamp(8px, 1.5vw, 12px) clamp(12px, 2vw, 18px); /* ボタンもスケーリング */
+    font-size: clamp(12px, 2vw, 14px);
     cursor: pointer;
     border-radius: 4px;
     transition: background-color 0.2s;
@@ -43,14 +49,13 @@ button:hover { background-color: #0056b3; }
 #reset { background-color: #dc3545; }
 #reset:hover { background-color: #c82333; }
 
-/* ★★★★★ レイアウト崩れ修正の最重要箇所 ★★★★★ */
+/* グリッドコンテナ */
 .pedigree-grid-container, .results-pedigree-container {
     display: grid;
-    /* グリッドを5世代分の5列構成に変更 */
     grid-template-columns: repeat(5, 1fr);
-    gap: 5px;
+    gap: clamp(3px, 0.5vw, 5px); /* ギャップもスケーリング */
     overflow-x: auto;
-    padding: 10px;
+    padding: clamp(5px, 1vw, 10px);
     border: 1px solid #ccc;
     border-radius: 8px;
 }
@@ -58,39 +63,36 @@ button:hover { background-color: #0056b3; }
 .pedigree-grid-container { background: #e9efff; }
 .results-pedigree-container { background: #f0f8ff; }
 
-.pedigree-cell, .result-cell {
+.pedigree-cell {
     border: 1px solid #ccc;
     background-color: #fff;
-    padding: 0px;
-    font-size: 0.95em;
+    padding: clamp(5px, 1vw, 10px);
     border-radius: 4px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    /* セルの最小幅を指定して、狭い画面でも内容が潰れないようにする */
-    min-width: 110px;
+    gap: clamp(4px, 0.8vw, 8px);
+    min-width: 220px;
 }
-
-.result-cell { padding: 5px; }
 
 select, .individual-select, .factor-select {
     width: 100%;
-    padding: 5px;
-    margin-bottom: 8px;
+    padding: clamp(4px, 0.8vw, 5px);
+    margin-bottom: clamp(4px, 0.8vw, 8px);
     border: 1px solid #ccc;
     border-radius: 3px;
+    font-size: clamp(12px, 2vw, 14px);
 }
 
 .stars-group { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 0px; }
-.stars-group label { display: flex; align-items: center; font-size: 0.9em; cursor: pointer; }
+.stars-group label { display: flex; align-items: center; font-size: clamp(11px, 1.8vw, 13px); cursor: pointer; }
 
 /* 適性表示テーブル */
-.aptitude-display { margin-top: 8px; border-top: 1px dashed #ccc; padding-top: 5px; width: 100%; }
-.aptitude-table { width: 100%; border-collapse: collapse; font-size: 1.0em; table-layout: fixed; }
-.aptitude-table td { border: 1px solid #ddd; text-align: center; padding: 0px; height: 20px; }
-.aptitude-table .apt-label { background-color: #f2f2f2; font-weight: bold; }
-.aptitude-table .apt-value { font-weight: bold; }
+.aptitude-display { margin-top: auto; border-top: 1px dashed #ccc; padding-top: 5px; width: 100%; }
+.aptitude-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.aptitude-table td { border: 1px solid #ddd; text-align: center; padding: 0; line-height: 1.2; height: clamp(20px, 4vw, 24px); }
+.aptitude-table .apt-label { background-color: #f2f2f2; font-weight: bold; font-size: clamp(11px, 1.8vw, 13px); }
+.aptitude-table .apt-value { font-weight: bold; font-size: clamp(12px, 2.2vw, 16px); }
 .aptitude-table .apt-value.rank-A { background-color: #ffddc9; }
 .aptitude-table .apt-value.rank-B { background-color: #ffcccc; }
 .aptitude-table .apt-value.rank-C { background-color: #ccffcc; }
@@ -101,17 +103,50 @@ select, .individual-select, .factor-select {
 .aptitude-table .apt-value.changed { color: red !important; }
 .aptitude-table td.empty { background-color: #fff; border-color: transparent; }
 
-/* 結果表示エリアの個別スタイル */
+/* ★★★★★ 結果画面の余白削減・スケーリング修正 ★★★★★ */
 .results-container { margin: 20px 0; }
-.result-cell .individual-name { font-weight: bold; font-size: 1.2em; text-align: center; }
-.result-cell .factor-info { color: #0056b3; font-weight: bold; font-size: 1.0em;text-align: center; }
+.result-cell {
+    padding: 2px; /* セル自体のパディングを削減 */
+    gap: 0; /* セル内要素のギャップを削除 */
+    min-width: 220px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.result-cell .individual-name {
+    font-weight: bold;
+    font-size: clamp(13px, 2.5vw, 18px); /* clampでスケーリング */
+    text-align: center;
+    line-height: 1.1; /* 行の高さを詰める */
+    padding: 2px 0; /* 上下のパディングを少しだけ確保 */
+}
+.result-cell .factor-info {
+    color: #0056b3;
+    font-weight: bold;
+    font-size: clamp(11px, 2vw, 14px);
+    text-align: center;
+    line-height: 1.1;
+    padding: 1px 0;
+}
 
 /* 遺伝子付与可能性 */
-.gene-potentials { margin-top: 5px; padding-top: 5px; border-top: 1px dashed #ccc; font-size: 1.0em; text-align: center; }
+.gene-potentials {
+    margin-top: auto; /* 一番下に配置 */
+    padding-top: 2px;
+    border-top: 1px dashed #ccc;
+    font-size: clamp(11px, 1.8vw, 13px);
+    text-align: center;
+    line-height: 1.2;
+}
 .gene-confirmed { color: #d9534f; font-weight: bold; }
 .gene-potential { color: #5cb85c; }
 
 /* 高さ統一のためのプレースホルダー */
-.factor-info-placeholder { height: 21px; }
-.aptitude-table-placeholder { height: 0px; }
-.gene-potentials-placeholder { height: 0px; }
+.factor-info-placeholder { height: clamp(15px, 2.8vw, 18px); }
+.aptitude-table-placeholder { height: clamp(120px, 22vw, 154px); }
+.gene-potentials-placeholder { height: clamp(30px, 5.5vw, 40px); }
+

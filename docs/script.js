@@ -62,44 +62,91 @@ const pedigreePositions = [
   // グローバル変数
   let horseData = [];
   
-  // ページ読み込み時の処理
-  document.addEventListener('DOMContentLoaded', async function() {
-    try {
-      // JSONデータの読み込み
-      const response = await fetch('umadata.json');
-      horseData = await response.json();
-      console.log('馬データを読み込みました');
-      
-      // 血統表グリッドを生成
-      createPedigreeGrid();
-      
-      // プルダウンリストを初期化
-      initializeDropdowns();
-      
-      // コピーボタンのイベントリスナー設定
-      setupCopyButtons();
-      
-      // 計算ボタンのイベントリスナー設定
-      const calculateButton = document.getElementById('calculate-button');
-      if (calculateButton) {
-        calculateButton.addEventListener('click', calculateAptitudes);
-      } else {
-        console.error('計算ボタンが見つかりません。HTML内のID名を確認してください。');
-      }
+/**
+ * CSVテキストをオブジェクトの配列に変換する関数
+ * @param {string} csvText - CSV形式のテキストデータ
+ * @returns {Array<Object>} パースされたオブジェクトの配列
+ */
+function csvToObjects(csvText) {
+  // CSVヘッダーとプログラム内部で使用するキー名の対応表
+  const headerMapping = {
+    '名前': '名前',
+    '芝': '芝',
+    'ダ': 'ダート',
+    '短': '短距離',
+    'マ': 'マイル',
+    '中': '中距離',
+    '長': '長距離',
+    '逃': '逃げ',
+    '先': '先行',
+    '差': '差し',
+    '追': '追込'
+  };
 
-        /*
-      // テストボタンのイベントリスナー設定
-      const testButton = document.getElementById('test-button');
-      if (testButton) {
-        testButton.addEventListener('click', fillRandomData);
-      } else {
-        console.error('テストボタンが見つかりません。HTML内のID名を確認してください。');
-      }*/
-    } catch (error) {
-      console.error('データ読み込みエラー:', error);
-      alert('データの読み込みに失敗しました。ページを再読み込みしてください。');
+  // 改行コードで各行に分割
+  const lines = csvText.trim().split(/\r\n|\n/);
+  // 1行目をヘッダーとして取得
+  const csvHeaders = lines[0].split(',');
+  const result = [];
+
+  // 2行目から最終行までループ
+  for (let i = 1; i < lines.length; i++) {
+    // 空行は処理をスキップ
+    if (lines[i].trim() === '') continue;
+
+    const obj = {};
+    const currentline = lines[i].split(',');
+
+    for (let j = 0; j < csvHeaders.length; j++) {
+      const csvHeader = csvHeaders[j].trim();
+      // 対応表から内部キーを取得
+      const internalKey = headerMapping[csvHeader];
+      if (internalKey) {
+        // 対応するキーが存在する場合のみオブジェクトに追加
+        obj[internalKey] = currentline[j] ? currentline[j].trim() : '';
+      }
     }
-  });
+    // オブジェクトに何らかのデータが含まれている場合のみ配列に追加
+    if (Object.keys(obj).length > 0 && obj['名前']) {
+      result.push(obj);
+    }
+  }
+  return result;
+}
+
+// ページ読み込み時の処理
+document.addEventListener('DOMContentLoaded', async function() {
+  try {
+    // CSVデータの読み込み
+    const response = await fetch('umadata.csv'); // ファイル名を.csvに変更
+    if (!response.ok) {
+        throw new Error(`CSVファイルの読み込みに失敗しました: ${response.statusText}`);
+    }
+    const csvData = await response.text(); // .text()でデータを取得
+    horseData = csvToObjects(csvData); // CSVパース関数を呼び出す
+    
+    console.log('馬データを読み込みました');
+
+    // 血統表グリッドを生成
+    createPedigreeGrid();
+    // プルダウンリストを初期化
+    initializeDropdowns();
+    // コピーボタンのイベントリスナー設定
+    setupCopyButtons();
+    // 計算ボタンのイベントリスナー設定
+    const calculateButton = document.getElementById('calculate-button');
+    if (calculateButton) {
+      calculateButton.addEventListener('click', calculateAptitudes);
+    } else {
+      console.error('計算ボタンが見つかりません。HTML内のID名を確認してください。');
+    }
+
+  } catch (error) {
+    console.error('データ読み込みまたは初期化エラー:', error);
+    alert('データの読み込みまたは初期化に失敗しました。ファイルが存在するか確認し、ページを再読み込みしてください。');
+  }
+});
+
   
   // 血統表グリッドを生成する関数
   function createPedigreeGrid() {
@@ -357,35 +404,48 @@ function updateAptitudeDisplay(pos, horse) {
     });
   }
   
-  // 個体データをコピー
-  function copyIndividualData(fromPos, toPos) {
+// 個体データをコピー
+function copyIndividualData(fromPos, toPos) {
     // 個体名
     const fromSelect = document.getElementById('individual_' + fromPos);
     const toSelect = document.getElementById('individual_' + toPos);
-    
     if (fromSelect && toSelect) {
-      toSelect.value = fromSelect.value;
-      
-      // 因子
-      const fromFactor = document.getElementById('factor_' + fromPos);
-      const toFactor = document.getElementById('factor_' + toPos);
-      if (fromFactor && toFactor) {
+        toSelect.value = fromSelect.value;
+    }
+
+    // 因子
+    const fromFactor = document.getElementById('factor_' + fromPos);
+    const toFactor = document.getElementById('factor_' + toPos);
+    if (fromFactor && toFactor) {
         toFactor.value = fromFactor.value;
-      }
-      
-      // 因子の☆数
-      const fromStar = document.querySelector('input[name="stars_' + fromPos + '"]:checked');
-      if (fromStar) {
+    }
+
+    // 因子の☆数
+    const fromStar = document.querySelector('input[name="stars_' + fromPos + '"]:checked');
+    if (fromStar) {
         const toStar = document.getElementById('stars_' + toPos + '_' + fromStar.value);
         if (toStar) {
-          toStar.checked = true;
+            toStar.checked = true;
         }
-      }
-      
-      // 適性表示も更新
-      updateHorseSelection(toPos, toSelect.value);
     }
-  }
+
+    // ▼▼▼【ここから修正】▼▼▼
+    // 適性表示も更新するが、因子の自動選択(selectBestFactor)は行わないようにする。
+    // そのため、updateHorseSelectionの代わりに、updateAptitudeDisplayを直接呼び出す。
+    if (toSelect && toSelect.value) {
+        const horse = horseData.find(h => h.名前 === toSelect.value);
+        if (horse) {
+            updateAptitudeDisplay(toPos, horse);
+        }
+    } else {
+        // コピー元が「未指定」の場合、コピー先の適性表示もクリアする
+        const aptitudeDisplay = document.getElementById('aptitude_' + toPos);
+        if (aptitudeDisplay) {
+            aptitudeDisplay.innerHTML = '';
+            aptitudeDisplay.style.display = 'none';
+        }
+    }
+}
   
   // フォームデータの収集
   function collectFormData() {

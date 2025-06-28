@@ -82,7 +82,7 @@ select, .individual-select, .factor-select {
     border-radius: 3px;
 }
 
-.stars-group { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+.stars-group { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 0px; }
 .stars-group label { display: flex; align-items: center; font-size: 0.9em; cursor: pointer; }
 
 /* 適性表示テーブル */

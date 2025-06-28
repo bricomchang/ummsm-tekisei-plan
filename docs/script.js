@@ -93,7 +93,8 @@ function csvToObjects(csvText) {
         if (lines[i].trim() === '') continue;
 
         const obj = {};
-        const currentline = currentline[i].split(',');
+        // ★★★★★★★★★★ ここが修正箇所です ★★★★★★★★★★
+        const currentline = lines[i].split(',');
 
         for (let j = 0; j < csvHeaders.length; j++) {
             const csvHeader = csvHeaders[j].trim();

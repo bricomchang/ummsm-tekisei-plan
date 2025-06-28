@@ -93,7 +93,6 @@ function createPedigreeGrid() {
         
         cell.style.gridRow = p.row + ' / span ' + span;
         
-        // 修正箇所3: 続柄表記を削除
         let content = `<div class="pedigree-cell-title"></div>`;
         
         if (p.displayFactor) {
@@ -114,7 +113,10 @@ function createPedigreeGrid() {
             }
             content += `</div>`;
             
-            content += `<div class="aptitude-display" data-position="${p.pos}"></div>`;
+            // 修正: 4代目・5代目は適性表示なし
+            if (p.gen <= 3) {
+                content += `<div class="aptitude-display" data-position="${p.pos}"></div>`;
+            }
         } else {
             content += `<select class="individual-select" data-position="${p.pos}">
                 <option value="">選択してください</option>
@@ -122,8 +124,9 @@ function createPedigreeGrid() {
             content += `<div class="aptitude-display" data-position="${p.pos}"></div>`;
         }
         
+        // 修正: ボタン名を「父方からコピー」に変更
         if (p.pos === 22 || p.pos === 29) {
-            content += `<button class="copy-button" data-position="${p.pos}">コピー</button>`;
+            content += `<button class="copy-button" data-position="${p.pos}">父方からコピー</button>`;
         }
         
         cell.innerHTML = content;
@@ -157,19 +160,36 @@ function updateAptitudeDisplay(select) {
     if (selectedHorse) {
         const horseData_item = horseData.find(h => h['名前'] === selectedHorse);
         if (horseData_item) {
-            const labels = {'芝': '芝', 'ダート': 'ダ', '短距離': '短', 'マイル': 'マ', '中距離': '中', '長距離': '長', '逃げ': '逃', '先行': '先', '差し': '差', '追込': '追'};
+            // 修正: 3段組の適性表示
+            let html = '<table class="aptitude-table">';
             
-            let html = '<table class="aptitude-table"><tr>';
-            factorTypes.forEach(type => {
-                html += `<td class="apt-label">${labels[type]}</td>`;
-            });
-            html += '</tr><tr>';
-            factorTypes.forEach(type => {
-                const rank = horseData_item[type] || 'G';
-                html += `<td class="apt-value rank-${rank}">${rank}</td>`;
-            });
-            html += '</tr></table>';
+            // 1段目: 芝・ダート
+            html += '<tr>';
+            html += `<td class="apt-label">芝</td><td class="apt-value rank-${horseData_item['芝'] || 'G'}">${horseData_item['芝'] || 'G'}</td>`;
+            html += `<td class="apt-label">ダ</td><td class="apt-value rank-${horseData_item['ダート'] || 'G'}">${horseData_item['ダート'] || 'G'}</td>`;
+            html += '</tr>';
             
+            // 2段目: 短・マ・中・長
+            html += '<tr>';
+            html += `<td class="apt-label">短</td><td class="apt-value rank-${horseData_item['短距離'] || 'G'}">${horseData_item['短距離'] || 'G'}</td>`;
+            html += `<td class="apt-label">マ</td><td class="apt-value rank-${horseData_item['マイル'] || 'G'}">${horseData_item['マイル'] || 'G'}</td>`;
+            html += '</tr>';
+            html += '<tr>';
+            html += `<td class="apt-label">中</td><td class="apt-value rank-${horseData_item['中距離'] || 'G'}">${horseData_item['中距離'] || 'G'}</td>`;
+            html += `<td class="apt-label">長</td><td class="apt-value rank-${horseData_item['長距離'] || 'G'}">${horseData_item['長距離'] || 'G'}</td>`;
+            html += '</tr>';
+            
+            // 3段目: 逃・先・差・追
+            html += '<tr>';
+            html += `<td class="apt-label">逃</td><td class="apt-value rank-${horseData_item['逃げ'] || 'G'}">${horseData_item['逃げ'] || 'G'}</td>`;
+            html += `<td class="apt-label">先</td><td class="apt-value rank-${horseData_item['先行'] || 'G'}">${horseData_item['先行'] || 'G'}</td>`;
+            html += '</tr>';
+            html += '<tr>';
+            html += `<td class="apt-label">差</td><td class="apt-value rank-${horseData_item['差し'] || 'G'}">${horseData_item['差し'] || 'G'}</td>`;
+            html += `<td class="apt-label">追</td><td class="apt-value rank-${horseData_item['追込'] || 'G'}">${horseData_item['追込'] || 'G'}</td>`;
+            html += '</tr>';
+            
+            html += '</table>';
             aptitudeDiv.innerHTML = html;
         }
     } else {
@@ -187,94 +207,59 @@ function setupCopyButtons() {
 }
 
 function copyPedigreeData(sourcePosition) {
-    const sourceCell = document.querySelector(`[data-position="${sourcePosition}"]`);
-    const sourceSelect = sourceCell.querySelector('.individual-select');
-    const sourceHorse = sourceSelect.value;
-    
-    if (!sourceHorse) {
-        alert('コピー元のウマ娘を選択してください。');
-        return;
-    }
-    
-    const sourceFactor = sourceCell.querySelector('.factor-select');
-    const sourceFactorValue = sourceFactor ? sourceFactor.value : '';
-    const sourceStars = sourceCell.querySelector('input[type="radio"]:checked');
-    const sourceStarsValue = sourceStars ? sourceStars.value : '';
-    
+    // 修正: 正しいコピー機能の実装
     let targetPositions = [];
+    
     if (sourcePosition === 22) { // 母方祖父
-        targetPositions = [7, 14]; // 父方祖父・祖母
+        // 父方祖父とその2代前まで（7人分）
+        targetPositions = [7, 3, 6, 1, 2, 4, 5];
     } else if (sourcePosition === 29) { // 母方祖母
-        targetPositions = [7, 14]; // 父方祖父・祖母
+        // 父方祖母とその2代前まで（7人分）
+        targetPositions = [14, 10, 13, 8, 9, 11, 12];
     }
     
-    targetPositions.forEach(targetPos => {
-        const targetCell = document.querySelector(`[data-position="${targetPos}"]`);
-        if (targetCell) {
+    // 対応する母方のpositionを取得
+    let sourcePositions = [];
+    if (sourcePosition === 22) { // 母方祖父
+        sourcePositions = [22, 18, 21, 16, 17, 19, 20];
+    } else if (sourcePosition === 29) { // 母方祖母
+        sourcePositions = [29, 25, 28, 23, 24, 26, 27];
+    }
+    
+    // コピー実行
+    for (let i = 0; i < targetPositions.length && i < sourcePositions.length; i++) {
+        const sourceCell = document.querySelector(`[data-position="${sourcePositions[i]}"]`);
+        const targetCell = document.querySelector(`[data-position="${targetPositions[i]}"]`);
+        
+        if (sourceCell && targetCell) {
+            // ウマ娘名をコピー
+            const sourceSelect = sourceCell.querySelector('.individual-select');
             const targetSelect = targetCell.querySelector('.individual-select');
-            if (targetSelect) targetSelect.value = sourceHorse;
-            
-            const targetFactor = targetCell.querySelector('.factor-select');
-            if (targetFactor && sourceFactorValue) targetFactor.value = sourceFactorValue;
-            
-            if (sourceStarsValue) {
-                const targetStars = targetCell.querySelector(`input[value="${sourceStarsValue}"]`);
-                if (targetStars) targetStars.checked = true;
+            if (sourceSelect && targetSelect) {
+                targetSelect.value = sourceSelect.value;
+                updateAptitudeDisplay(targetSelect);
             }
             
-            updateAptitudeDisplay(targetSelect);
+            // 因子の種類をコピー
+            const sourceFactor = sourceCell.querySelector('.factor-select');
+            const targetFactor = targetCell.querySelector('.factor-select');
+            if (sourceFactor && targetFactor) {
+                targetFactor.value = sourceFactor.value;
+            }
             
-            // 3代目、4代目、5代目もコピー
-            copyDescendants(sourcePosition, targetPos);
+            // 因子の数（星）をコピー
+            const sourceStars = sourceCell.querySelector('input[type="radio"]:checked');
+            if (sourceStars) {
+                const targetStars = targetCell.querySelector(`input[value="${sourceStars.value}"]`);
+                if (targetStars) {
+                    targetStars.checked = true;
+                }
+            }
         }
-    });
+    }
     
     saveStateToLocalStorage();
-    alert('データをコピーしました。');
-}
-
-function copyDescendants(sourcePos, targetPos) {
-    const positionMappings = {
-        22: { // 母方祖父
-            18: 3, 21: 6, // 4代目
-            16: 1, 17: 2, 19: 4, 20: 5 // 5代目
-        },
-        29: { // 母方祖母
-            25: 10, 28: 13, // 4代目
-            23: 8, 24: 9, 26: 11, 27: 12 // 5代目
-        }
-    };
-    
-    if (positionMappings[sourcePos]) {
-        Object.keys(positionMappings[sourcePos]).forEach(srcPos => {
-            const src = parseInt(srcPos);
-            const tgt = positionMappings[sourcePos][srcPos];
-            
-            const sourceCell = document.querySelector(`[data-position="${src}"]`);
-            const targetCell = document.querySelector(`[data-position="${tgt}"]`);
-            
-            if (sourceCell && targetCell) {
-                const sourceSelect = sourceCell.querySelector('.individual-select');
-                const targetSelect = targetCell.querySelector('.individual-select');
-                if (sourceSelect && targetSelect) {
-                    targetSelect.value = sourceSelect.value;
-                    updateAptitudeDisplay(targetSelect);
-                }
-                
-                const sourceFactor = sourceCell.querySelector('.factor-select');
-                const targetFactor = targetCell.querySelector('.factor-select');
-                if (sourceFactor && targetFactor) {
-                    targetFactor.value = sourceFactor.value;
-                }
-                
-                const sourceStars = sourceCell.querySelector('input[type="radio"]:checked');
-                if (sourceStars) {
-                    const targetStars = targetCell.querySelector(`input[value="${sourceStars.value}"]`);
-                    if (targetStars) targetStars.checked = true;
-                }
-            }
-        });
-    }
+    alert('父方にデータをコピーしました。');
 }
 
 function setupControlButtons() {
@@ -316,7 +301,6 @@ function calculateResults() {
         return;
     }
     
-    // 修正箇所2: 全世代（4代目・5代目も含む）の因子を集計
     const factorCounts = {};
     factorTypes.forEach(type => factorCounts[type] = 0);
     
@@ -359,7 +343,7 @@ function calculateResults() {
             base: baseRank,
             final: newRank,
             stars: stars,
-            changed: newIndex > baseIndex // 修正箇所1: 変化フラグを追加
+            changed: newIndex > baseIndex
         };
     });
     
@@ -408,28 +392,97 @@ function displayResults(results, targetHorse) {
                 const aptitudeTable = document.createElement('table');
                 aptitudeTable.className = 'aptitude-table';
                 
-                const labels = {'芝': '芝', 'ダート': 'ダ', '短距離': '短', 'マイル': 'マ', '中距離': '中', '長距離': '長', '逃げ': '逃', '先行': '先', '差し': '差', '追込': '追'};
+                // 修正: 結果表示も3段組に変更
+                let html = '';
                 
-                let html = '<tr>';
-                factorTypes.forEach(type => {
-                    html += `<td class="apt-label">${labels[type]}</td>`;
-                });
-                html += '</tr><tr>';
-                
-                factorTypes.forEach(type => {
+                // 1段目: 芝・ダート
+                html += '<tr>';
+                ['芝', 'ダート'].forEach(type => {
                     let rank;
                     let isChanged = false;
                     
-                    if (pos === 31) { // 本人の場合は計算結果を使用
+                    if (pos === 31) {
                         rank = results[type].final;
                         isChanged = results[type].changed;
-                    } else { // その他は元データを使用
+                    } else {
                         rank = horseData_item[type] || 'G';
                     }
                     
-                    // 修正箇所1: 変化した適性は赤文字で表示
                     const cellClass = `apt-value rank-${rank}${isChanged ? ' changed' : ''}`;
-                    html += `<td class="${cellClass}">${rank}</td>`;
+                    const label = type === 'ダート' ? 'ダ' : type;
+                    html += `<td class="apt-label">${label}</td><td class="${cellClass}">${rank}</td>`;
+                });
+                html += '</tr>';
+                
+                // 2段目: 短・マ・中・長
+                html += '<tr>';
+                ['短距離', 'マイル'].forEach(type => {
+                    let rank;
+                    let isChanged = false;
+                    
+                    if (pos === 31) {
+                        rank = results[type].final;
+                        isChanged = results[type].changed;
+                    } else {
+                        rank = horseData_item[type] || 'G';
+                    }
+                    
+                    const cellClass = `apt-value rank-${rank}${isChanged ? ' changed' : ''}`;
+                    const label = type === '短距離' ? '短' : 'マ';
+                    html += `<td class="apt-label">${label}</td><td class="${cellClass}">${rank}</td>`;
+                });
+                html += '</tr>';
+                html += '<tr>';
+                ['中距離', '長距離'].forEach(type => {
+                    let rank;
+                    let isChanged = false;
+                    
+                    if (pos === 31) {
+                        rank = results[type].final;
+                        isChanged = results[type].changed;
+                    } else {
+                        rank = horseData_item[type] || 'G';
+                    }
+                    
+                    const cellClass = `apt-value rank-${rank}${isChanged ? ' changed' : ''}`;
+                    const label = type === '中距離' ? '中' : '長';
+                    html += `<td class="apt-label">${label}</td><td class="${cellClass}">${rank}</td>`;
+                });
+                html += '</tr>';
+                
+                // 3段目: 逃・先・差・追
+                html += '<tr>';
+                ['逃げ', '先行'].forEach(type => {
+                    let rank;
+                    let isChanged = false;
+                    
+                    if (pos === 31) {
+                        rank = results[type].final;
+                        isChanged = results[type].changed;
+                    } else {
+                        rank = horseData_item[type] || 'G';
+                    }
+                    
+                    const cellClass = `apt-value rank-${rank}${isChanged ? ' changed' : ''}`;
+                    const label = type === '逃げ' ? '逃' : '先';
+                    html += `<td class="apt-label">${label}</td><td class="${cellClass}">${rank}</td>`;
+                });
+                html += '</tr>';
+                html += '<tr>';
+                ['差し', '追込'].forEach(type => {
+                    let rank;
+                    let isChanged = false;
+                    
+                    if (pos === 31) {
+                        rank = results[type].final;
+                        isChanged = results[type].changed;
+                    } else {
+                        rank = horseData_item[type] || 'G';
+                    }
+                    
+                    const cellClass = `apt-value rank-${rank}${isChanged ? ' changed' : ''}`;
+                    const label = type === '差し' ? '差' : '追';
+                    html += `<td class="apt-label">${label}</td><td class="${cellClass}">${rank}</td>`;
                 });
                 html += '</tr>';
                 
@@ -493,7 +546,6 @@ function resetAllInputs() {
 function saveStateToLocalStorage() {
     const state = {};
     
-    // 修正箇所2: 全世代の入力状態を保存
     inputPedigreePositions.forEach(p => {
         const cell = document.querySelector(`[data-position="${p.pos}"]`);
         if (cell) {
@@ -529,7 +581,6 @@ function loadStateFromLocalStorage() {
     try {
         const state = JSON.parse(savedState);
         
-        // 修正箇所2: 全世代の入力状態を復元
         inputPedigreePositions.forEach(p => {
             const cell = document.querySelector(`[data-position="${p.pos}"]`);
             if (cell) {

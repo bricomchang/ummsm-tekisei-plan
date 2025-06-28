@@ -87,8 +87,8 @@ select, .individual-select, .factor-select {
 
 /* 適性表示テーブル */
 .aptitude-display { margin-top: 8px; border-top: 1px dashed #ccc; padding-top: 5px; width: 100%; }
-.aptitude-table { width: 100%; border-collapse: collapse; font-size: 1em; table-layout: fixed; }
-.aptitude-table td { border: 1px solid #ddd; text-align: center; padding: 3px; height: 24px; }
+.aptitude-table { width: 100%; border-collapse: collapse; font-size: 1.25em; table-layout: fixed; }
+.aptitude-table td { border: 1px solid #ddd; text-align: center; padding: 0px; height: 24px; }
 .aptitude-table .apt-label { background-color: #f2f2f2; font-weight: bold; }
 .aptitude-table .apt-value { font-weight: bold; }
 .aptitude-table .apt-value.rank-A { background-color: #ffddc9; }

@@ -3,26 +3,18 @@ body {
     font-family: 'Meiryo', sans-serif;
     background-color: #f5f5f5;
     margin: 0;
-    padding: clamp(10px, 2vw, 20px); /* ウィンドウ幅に応じてパディングを調整 */
+    padding: clamp(10px, 2vw, 20px);
     color: #333;
 }
 
-.app-container {
-    max-width: 1500px;
-    margin: 0 auto;
+h1, h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
 }
 
-h1 {
-    font-size: clamp(1.5rem, 4vw, 2.5rem); /* clampで見出しもスケーリング */
-    text-align: center;
-    margin-bottom: clamp(15px, 3vw, 20px);
-}
-
-h2 {
-    font-size: clamp(1.2rem, 3vw, 1.8rem);
-    text-align: center;
-    margin-bottom: clamp(10px, 2vw, 15px);
-}
+h1 { font-size: clamp(1.5rem, 4vw, 2.5rem); }
+h2 { font-size: clamp(1.2rem, 3vw, 1.8rem); }
 
 .top-controls-container {
     margin-bottom: 15px;
@@ -36,7 +28,7 @@ button {
     background-color: #007bff;
     color: white;
     border: none;
-    padding: clamp(8px, 1.5vw, 12px) clamp(12px, 2vw, 18px); /* ボタンもスケーリング */
+    padding: clamp(8px, 1.5vw, 12px) clamp(12px, 2vw, 18px);
     font-size: clamp(12px, 2vw, 14px);
     cursor: pointer;
     border-radius: 4px;
@@ -53,7 +45,7 @@ button:hover { background-color: #0056b3; }
 .pedigree-grid-container, .results-pedigree-container {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: clamp(3px, 0.5vw, 5px); /* ギャップもスケーリング */
+    gap: clamp(3px, 0.5vw, 5px);
     overflow-x: auto;
     padding: clamp(5px, 1vw, 10px);
     border: 1px solid #ccc;
@@ -63,7 +55,7 @@ button:hover { background-color: #0056b3; }
 .pedigree-grid-container { background: #e9efff; }
 .results-pedigree-container { background: #f0f8ff; }
 
-.pedigree-cell {
+.pedigree-cell, .result-cell {
     border: 1px solid #ccc;
     background-color: #fff;
     padding: clamp(5px, 1vw, 10px);
@@ -88,7 +80,14 @@ select, .individual-select, .factor-select {
 .stars-group label { display: flex; align-items: center; font-size: clamp(11px, 1.8vw, 13px); cursor: pointer; }
 
 /* 適性表示テーブル */
-.aptitude-display { margin-top: auto; border-top: 1px dashed #ccc; padding-top: 5px; width: 100%; }
+/* ★★★★★ 入力画面の適性表を上寄せにするための修正 ★★★★★ */
+.aptitude-display {
+    /* margin-top: auto; を削除 */
+    border-top: 1px dashed #ccc;
+    padding-top: 5px;
+    width: 100%;
+}
+
 .aptitude-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
 .aptitude-table td { border: 1px solid #ddd; text-align: center; padding: 0; line-height: 1.2; height: clamp(20px, 4vw, 24px); }
 .aptitude-table .apt-label { background-color: #f2f2f2; font-weight: bold; font-size: clamp(11px, 1.8vw, 13px); }
@@ -103,26 +102,20 @@ select, .individual-select, .factor-select {
 .aptitude-table .apt-value.changed { color: red !important; }
 .aptitude-table td.empty { background-color: #fff; border-color: transparent; }
 
-/* ★★★★★ 結果画面の余白削減・スケーリング修正 ★★★★★ */
+/* 結果表示エリア */
 .results-container { margin: 20px 0; }
 .result-cell {
-    padding: 2px; /* セル自体のパディングを削減 */
-    gap: 0; /* セル内要素のギャップを削除 */
+    padding: 2px;
+    gap: 0;
     min-width: 220px;
-    border: 1px solid #ccc;
-    background-color: #fff;
-    border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
 }
 
 .result-cell .individual-name {
     font-weight: bold;
-    font-size: clamp(13px, 2.5vw, 18px); /* clampでスケーリング */
+    font-size: clamp(13px, 2.5vw, 18px);
     text-align: center;
-    line-height: 1.1; /* 行の高さを詰める */
-    padding: 2px 0; /* 上下のパディングを少しだけ確保 */
+    line-height: 1.1;
+    padding: 2px 0;
 }
 .result-cell .factor-info {
     color: #0056b3;
@@ -135,7 +128,7 @@ select, .individual-select, .factor-select {
 
 /* 遺伝子付与可能性 */
 .gene-potentials {
-    margin-top: auto; /* 一番下に配置 */
+    margin-top: auto;
     padding-top: 2px;
     border-top: 1px dashed #ccc;
     font-size: clamp(11px, 1.8vw, 13px);
@@ -145,8 +138,10 @@ select, .individual-select, .factor-select {
 .gene-confirmed { color: #d9534f; font-weight: bold; }
 .gene-potential { color: #5cb85c; }
 
-/* 高さ統一のためのプレースホルダー */
-.factor-info-placeholder { height: clamp(15px, 2.8vw, 18px); }
-.aptitude-table-placeholder { height: clamp(120px, 22vw, 154px); }
-.gene-potentials-placeholder { height: clamp(30px, 5.5vw, 40px); }
-
+/* ★★★★★ プレースホルダー関連のCSSを削除 ★★★★★ */
+.aptitude-table-placeholder {
+    height: 154px; /* 未選択の際に高さを維持するための仮の高さ */
+}
+.gene-potentials-placeholder {
+    height: 40px; /* 未選択の際に高さを維持するための仮の高さ */
+}

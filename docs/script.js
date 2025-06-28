@@ -162,16 +162,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
-    // ★★★★★ 修正箇所 ★★★★★
-    // 継承ルールに則った、因子集計対象の祖先を取得する関数
     function getFactorSourcePositions(pos) {
-        if (pos === 31) { // 本人の場合、親と祖父母の6名
-            return [15, 30, 7, 14, 22, 29];
-        } else if (pos === 15 || pos === 30) { // 親の場合、その親と祖父母の6名
-            return getAncestorsForGenePotential(pos);
-        } else if (pos === 7 || pos === 14 || pos === 22 || pos === 29) { // 祖父母の場合、その親と祖父母の6名
-            return getAncestorsForGenePotential(pos);
-        }
+        if (pos === 31) { return [15, 30, 7, 14, 22, 29]; }
+        else if (pos === 15 || pos === 30) { return getAncestorsForGenePotential(pos); }
+        else if (pos === 7 || pos === 14 || pos === 22 || pos === 29) { return getAncestorsForGenePotential(pos); }
         return [];
     }
 
@@ -238,8 +232,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         });
 
-        // ★★★★★ 修正箇所 ★★★★★
-        // メインの計算表示ループ
         inputPedigreePositions.forEach(p => {
             const cell = document.createElement('div');
             cell.className = `result-cell gen${p.gen}`;
@@ -252,18 +244,15 @@ document.addEventListener('DOMContentLoaded', async function() {
             let nameHTML = `<div class="individual-name">${horseName || (p.pos === 31 ? '未指定' : '')}</div>`;
             const factor = formData['factor_' + p.pos];
             const star = formData['star_' + p.pos];
-            let factorHTML = (p.displayFactor && factor && star) ? `<div class="factor-info">${factor} ☆${star}</div>` : '<div class="factor-info-placeholder"></div>';
+            let factorHTML = (p.displayFactor && factor && star) ? `<div class="factor-info">${factor} ☆${star}</div>` : '';
             let tableHTML = '';
             let geneHTML = '';
             
             if (p.gen <= 3) {
                 const horseDataEntry = horseData.find(h => h['名前'] === horseName);
                 let calculatedRanks = {};
-
                 if (horseDataEntry) {
-                    // ルールに則った因子源を取得
                     const factorSourcePositions = getFactorSourcePositions(p.pos);
-                    
                     const factorCounts = {};
                     factorTypes.forEach(type => factorCounts[type] = 0);
                     factorSourcePositions.forEach(ancPos => {
@@ -273,7 +262,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                             factorCounts[ancFactor] += parseInt(ancStar, 10);
                         }
                     });
-
                     factorTypes.forEach(type => {
                         const baseRankIndex = aptitudeRanks.indexOf(horseDataEntry[type] || 'G');
                         let increase = 0;
@@ -286,14 +274,9 @@ document.addEventListener('DOMContentLoaded', async function() {
                         };
                     });
                 }
-                
                 tableHTML = createAptitudeTableHTML(horseName, calculatedRanks);
                 const genePotentials = calculateGenePotential(p.pos, formData);
                 geneHTML = generateGenePotentialHTML(genePotentials);
-
-            } else {
-                tableHTML = '<div class="aptitude-table-placeholder"></div>';
-                geneHTML = '<div class="gene-potentials-placeholder"></div>';
             }
             
             cell.innerHTML = nameHTML + factorHTML + tableHTML + geneHTML;

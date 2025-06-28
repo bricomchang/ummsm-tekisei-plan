@@ -87,8 +87,8 @@ select, .individual-select, .factor-select {
 
 /* 適性表示テーブル */
 .aptitude-display { margin-top: 8px; border-top: 1px dashed #ccc; padding-top: 5px; width: 100%; }
-.aptitude-table { width: 100%; border-collapse: collapse; font-size: 1.25em; table-layout: fixed; }
-.aptitude-table td { border: 1px solid #ddd; text-align: center; padding: 0px; height: 24px; }
+.aptitude-table { width: 100%; border-collapse: collapse; font-size: 1.0em; table-layout: fixed; }
+.aptitude-table td { border: 1px solid #ddd; text-align: center; padding: 0px; height: 20px; }
 .aptitude-table .apt-label { background-color: #f2f2f2; font-weight: bold; }
 .aptitude-table .apt-value { font-weight: bold; }
 .aptitude-table .apt-value.rank-A { background-color: #ffddc9; }
@@ -103,11 +103,11 @@ select, .individual-select, .factor-select {
 
 /* 結果表示エリアの個別スタイル */
 .results-container { margin: 20px 0; }
-.result-cell .individual-name { font-weight: bold; font-size: 1.5em; text-align: center; }
-.result-cell .factor-info { color: #0056b3; font-weight: bold; font-size: 1.2em;text-align: center; }
+.result-cell .individual-name { font-weight: bold; font-size: 1.2em; text-align: center; }
+.result-cell .factor-info { color: #0056b3; font-weight: bold; font-size: 1.0em;text-align: center; }
 
 /* 遺伝子付与可能性 */
-.gene-potentials { margin-top: 5px; padding-top: 5px; border-top: 1px dashed #ccc; font-size: 1.3em; text-align: center; }
+.gene-potentials { margin-top: 5px; padding-top: 5px; border-top: 1px dashed #ccc; font-size: 1.0em; text-align: center; }
 .gene-confirmed { color: #d9534f; font-weight: bold; }
 .gene-potential { color: #5cb85c; }
 

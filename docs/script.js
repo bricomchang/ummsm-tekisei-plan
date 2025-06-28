@@ -238,6 +238,231 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
   }
   
+  const LOCAL_STORAGE_KEY = 'umamusumePedigreeData';
+
+// ページ読み込み時の処理
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        const response = await fetch('umadata.csv');
+        if (!response.ok) {
+            throw new Error(`CSVファイルの読み込みに失敗しました: ${response.statusText}`);
+        }
+        const csvData = await response.text();
+        horseData = csvToObjects(csvData);
+
+        createPedigreeGrid();
+        initializeDropdowns();
+        setupCopyButtons();
+        setupControlButtons(); // 操作ボタンのイベントリスナーを設定
+
+        loadStateFromLocalStorage(); // LocalStorageからデータを復元
+
+    } catch (error) {
+        console.error('データ読み込みまたは初期化エラー:', error);
+        alert('データの読み込みまたは初期化に失敗しました。');
+    }
+});
+
+/**
+ * フォームの入力内容をオブジェクトとして収集する
+ * @returns {object} フォームデータ
+ */
+function collectFormData() {
+    const data = {};
+    pedigreePositions.forEach(p => {
+        const pos = p.pos;
+        const individualSelect = document.getElementById(`individual_${pos}`);
+        if (individualSelect) {
+            data[`individual_${pos}`] = individualSelect.value;
+        }
+        if (p.displayFactor) {
+            const factorSelect = document.getElementById(`factor_${pos}`);
+            const starRadio = document.querySelector(`input[name="stars_${pos}"]:checked`);
+            if (factorSelect) {
+                data[`factor_${pos}`] = factorSelect.value;
+            }
+            if (starRadio) {
+                data[`stars_${pos}`] = starRadio.value;
+            } else {
+                data[`stars_${pos}`] = '0'; // 未選択の場合は0
+            }
+        }
+    });
+    return data;
+}
+
+/**
+ * フォームの状態をLocalStorageに保存する
+ */
+function saveStateToLocalStorage() {
+    if (typeof(Storage) === "undefined") {
+        console.warn("このブラウザはLocalStorageをサポートしていません。自動保存は機能しません。");
+        return;
+    }
+    const formData = collectFormData();
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(formData));
+    console.log("フォームの状態を自動保存しました。");
+}
+
+/**
+ * LocalStorageからフォームの状態を復元する
+ */
+function loadStateFromLocalStorage() {
+    const savedDataJSON = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (!savedDataJSON) return;
+
+    const savedData = JSON.parse(savedDataJSON);
+    applyDataToForm(savedData);
+    console.log("保存されたデータを復元しました。");
+}
+
+/**
+ * オブジェクトデータに基づいてフォームを更新する
+ * @param {object} data - フォームデータオブジェクト
+ */
+function applyDataToForm(data) {
+    pedigreePositions.forEach(p => {
+        const pos = p.pos;
+        const individualValue = data[`individual_${pos}`];
+        const factorValue = data[`factor_${pos}`];
+        const starValue = data[`stars_${pos}`];
+
+        const individualSelect = document.getElementById(`individual_${pos}`);
+        if (individualSelect && individualValue) {
+            individualSelect.value = individualValue;
+            // changeイベントを発火させて適性表示などを更新
+            individualSelect.dispatchEvent(new Event('change'));
+        }
+
+        if (p.displayFactor) {
+            const factorSelect = document.getElementById(`factor_${pos}`);
+            if (factorSelect && factorValue) {
+                factorSelect.value = factorValue;
+            }
+            if (starValue) {
+                const starRadio = document.getElementById(`stars_${pos}_${starValue}`);
+                if (starRadio) starRadio.checked = true;
+            }
+        }
+    });
+}
+
+/**
+ * 操作ボタン（計算、リセット、インポート、コピー）のイベントリスナーを設定する
+ */
+function setupControlButtons() {
+    document.getElementById('calculate-button').addEventListener('click', () => {
+        calculateAptitudes();
+        handleExport(); // 計算後にエクスポート処理も行う
+    });
+    document.getElementById('reset-button').addEventListener('click', handleReset);
+    document.getElementById('import-button').addEventListener('click', handleImport);
+    document.getElementById('copy-export-button').addEventListener('click', copyExportDataToClipboard);
+}
+
+/**
+ * リセット処理
+ */
+function handleReset() {
+    if (confirm("本当に入力内容をすべてリセットしますか？\nこの操作は元に戻せません。")) {
+        localStorage.removeItem(LOCAL_STORAGE_KEY);
+        document.getElementById('pedigree-form').reset();
+        // 画面をリロードして完全に初期状態に戻す
+        location.reload();
+    }
+}
+
+/**
+ * インポート処理
+ */
+function handleImport() {
+    const importDataText = document.getElementById('import-data-input').value;
+    if (!importDataText.trim()) {
+        alert("インポートするデータを入力してください。");
+        return;
+    }
+    try {
+        const importData = JSON.parse(importDataText);
+        applyDataToForm(importData);
+        saveStateToLocalStorage(); // インポートした内容を自動保存
+        alert("データをインポートしました。");
+    } catch (e) {
+        alert("データの形式が正しくありません。エクスポートされたテキストを正しく貼り付けてください。");
+        console.error("インポートエラー:", e);
+    }
+}
+
+/**
+ * エクスポート処理（テキストエリアに表示）
+ */
+function handleExport() {
+    const exportContainer = document.getElementById('export-container');
+    const exportTextarea = document.getElementById('export-data-output');
+    const formData = collectFormData();
+    // JSON文字列を整形して出力
+    exportTextarea.value = JSON.stringify(formData, null, 2);
+    exportContainer.style.display = 'block';
+}
+
+/**
+ * エクスポートデータをクリップボードにコピーする
+ */
+function copyExportDataToClipboard() {
+    const exportTextarea = document.getElementById('export-data-output');
+    const copyButton = document.getElementById('copy-export-button');
+
+    navigator.clipboard.writeText(exportTextarea.value).then(() => {
+        const originalText = copyButton.textContent;
+        copyButton.textContent = 'コピーしました！';
+        setTimeout(() => {
+            copyButton.textContent = originalText;
+        }, 2000);
+    }).catch(err => {
+        alert('クリップボードへのコピーに失敗しました。');
+        console.error('コピー失敗:', err);
+    });
+}
+
+// ドロップダウンの初期化（イベントリスナーに自動保存を追加）
+function initializeDropdowns() {
+    const horseNames = horseData.map(horse => horse.名前).sort();
+    
+    // イベントリスナーの共通処理
+    const eventHandler = (event) => {
+        if (event.target.classList.contains('individual-select')) {
+            const pos = event.target.id.split('_')[1];
+            updateHorseSelection(pos, event.target.value);
+        }
+        saveStateToLocalStorage(); // どの入力が変更されても保存
+    };
+
+    document.querySelectorAll('.individual-select, .factor-select, input[type="radio"]').forEach(element => {
+        if (element.type === 'radio') {
+            element.addEventListener('click', eventHandler);
+        } else {
+            element.addEventListener('change', eventHandler);
+        }
+    });
+
+    document.querySelectorAll('.individual-select').forEach(select => {
+        horseNames.forEach(name => {
+            const option = document.createElement('option');
+            option.value = name;
+            option.textContent = name;
+            select.appendChild(option);
+        });
+    });
+
+    document.querySelectorAll('.factor-select').forEach(select => {
+        factorTypes.forEach(type => {
+            const option = document.createElement('option');
+            option.value = type;
+            option.textContent = type;
+            select.appendChild(option);
+        });
+    });
+}
+
   // ドロップダウンの初期化
   function initializeDropdowns() {
     // 馬名のプルダウン初期化

@@ -238,7 +238,18 @@
 </head>
 <body>
   <h1>因子作り支援・ウマ娘適性計算機</h1>
-  
+  <form id="pedigree-form">
+    <div class="controls-container">
+        <div class="control-group">
+            <button type="button" id="calculate-button">計算する</button>
+            <button type="button" id="reset-button">入力内容をリセット</button>
+        </div>
+        <div class="control-group import-group">
+            <textarea id="import-data-input" placeholder="ここにエクスポートしたデータを貼り付けてインポート"></textarea>
+            <button type="button" id="import-button">インポート</button>
+        </div>
+    </div>
+
   <div id="pedigreeGrid" class="pedigree-container">
     <!-- ここに血統表のセルが動的に生成されます -->
   </div>
@@ -248,7 +259,12 @@
   </div>
   
   <div id="results"></div>
-  
+      <div id="export-container" class="export-container" style="display:none;">
+        <h2>データのエクスポート</h2>
+        <p>以下のテキストをコピーして保存することで、後からインポートして再現できます。</p>
+        <textarea id="export-data-output" readonly></textarea>
+        <button type="button" id="copy-export-button">クリップボードへコピー</button>
+    </div>
   <script src="script.js"></script>
 </body>
 </html>

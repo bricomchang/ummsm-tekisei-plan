@@ -1,4 +1,3 @@
-// ★★★★★ ポジションデータは入力フォーム専用に ★★★★★
 const inputPedigreePositions = [
     {gen: 1, pos: 31, label: '本人', row: 1, displayFactor: false}, {gen: 2, pos: 15, label: '父', row: 1, displayFactor: true},
     {gen: 2, pos: 30, label: '母', row: 9, displayFactor: true}, {gen: 3, pos: 7, label: '父方祖父', row: 1, displayFactor: true},
@@ -77,7 +76,7 @@ function createPedigreeGrid() {
         }
         if (p.pos === 22) content += `<button type="button" class="copy-button" data-action="copyGrandfather">父方祖父系統からコピー</button>`;
         else if (p.pos === 29) content += `<button type="button" class="copy-button" data-action="copyGrandmother">父方祖母系統からコピー</button>`;
-        if (displayPositions.includes(p.pos)) content += `<div id="aptitude_${p.pos}" class="aptitude-display"></div>`;
+        if (displayPositions.includes(p.pos)) content += `<div id="aptitude_${p.pos}" class="aptitude-display" style="display:none;"></div>`;
         cell.innerHTML = content;
         container.appendChild(cell);
     });
@@ -148,8 +147,8 @@ function initializeDropdowns() {
     };
     document.querySelectorAll('.individual-select').forEach(s => { horseNames.forEach(n => { const o = document.createElement('option'); o.value = n; o.textContent = n; s.appendChild(o); }); s.addEventListener('change', handler); });
     document.querySelectorAll('.factor-select').forEach(s => { factorTypes.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; s.appendChild(o); }); s.addEventListener('change', handler); });
-    document.querySelectorAll('input[type="radio"]').forEach(r => r.addEventListener('change', handler));
-}
+    document.querySelectorAll('input[type="radio"]').forEach(r => r.addEventListener('change', handler);
+});
 
 function updateHorseSelection(pos, horseName) {
     const isDisplay = displayPositions.includes(parseInt(pos));
@@ -157,26 +156,13 @@ function updateHorseSelection(pos, horseName) {
     if (isDisplay && horseName) {
         const horse = horseData.find(h => h.名前 === horseName);
         if (horse) {
-            updateAptitudeDisplay(pos, horse);
+            aptDiv.innerHTML = formatAptitudeTable(horse);
+            aptDiv.style.display = 'block';
             selectBestFactor(pos, horse);
         }
     } else if (aptDiv) {
         aptDiv.innerHTML = ''; aptDiv.style.display = 'none';
     }
-}
-
-function updateAptitudeDisplay(pos, horse) {
-    const aptDiv = document.getElementById('aptitude_' + pos);
-    if (!aptDiv) return;
-    let html = '';
-    const groups = [['芝', 'ダート'], ['短距離', 'マイル', '中距離', '長距離'], ['逃げ', '先行', '差し', '追込']];
-    const labels = {'ダート':'ダ','短距離':'短','マイル':'マ','中距離':'中','長距離':'長','先行':'先','追込':'追'};
-    groups.forEach(group => {
-        html += '<div class="aptitude-group">';
-        group.forEach(type => { html += `<div class="aptitude-item"><span class="apt-label">${labels[type]||type[0]}:</span><span class="apt-value rank-${horse[type]}">${horse[type]}</span></div>`; });
-        html += '</div>';
-    });
-    aptDiv.innerHTML = html; aptDiv.style.display = 'block';
 }
 
 function selectBestFactor(pos, horse) {
@@ -204,21 +190,30 @@ function copyPaternalBranch(fromPos, toPos) {
     branchMap[fromPos].forEach((from, i) => copyIndividualData(from, copyMap[toPos][i]));
 }
 
+// ★★★★★ コピー機能の修正箇所 ★★★★★
 function copyIndividualData(fromPos, toPos) {
     const fromInd = document.getElementById(`individual_${fromPos}`);
     const toInd = document.getElementById(`individual_${toPos}`);
     toInd.value = fromInd.value;
 
     const fromFactor = document.getElementById(`factor_${fromPos}`);
-    let fromFactorValue = '';
-    if (fromFactor) fromFactorValue = fromFactor.value;
+    const fromFactorValue = fromFactor ? fromFactor.value : '';
     
     const fromStar = document.querySelector(`input[name="stars_${fromPos}"]:checked`);
-    let fromStarValue = '0';
-    if(fromStar) fromStarValue = fromStar.value;
+    const fromStarValue = fromStar ? fromStar.value : '0';
 
-    toInd.dispatchEvent(new Event('change', { bubbles: true }));
+    // 適性表示のみを更新（changeイベントは発火させない）
+    const horse = horseData.find(h => h.名前 === toInd.value);
+    const aptDiv = document.getElementById('aptitude_' + toPos);
+    if (horse && aptDiv) {
+        aptDiv.innerHTML = formatAptitudeTable(horse);
+        aptDiv.style.display = 'block';
+    } else if (aptDiv) {
+        aptDiv.innerHTML = '';
+        aptDiv.style.display = 'none';
+    }
     
+    // 因子と★の値を直接設定
     const toFactor = document.getElementById(`factor_${toPos}`);
     if(toFactor) toFactor.value = fromFactorValue;
 
@@ -268,62 +263,31 @@ function calculateGenePotential(pos, formData) {
     return potentials.sort((a, b) => b.stars - a.stars).slice(0, 3);
 }
 
-// ★★★★★ 結果表示関数（修正箇所） ★★★★★
 function displayResults(results) {
     const resultDiv = document.getElementById('results');
     if (!resultDiv) return;
-
     let html = '<h2>計算結果</h2><div class="results-pedigree-container">';
-
     const layoutMap = {
-        // gen, pos, col, row, rowSpan
-        1: { pos: 31, col: 1, row: 1, rowSpan: 16 },
-        2: [
-            { pos: 15, col: 2, row: 1, rowSpan: 8 },
-            { pos: 30, col: 2, row: 9, rowSpan: 8 }
-        ],
-        3: [
-            { pos: 7,  col: 3, row: 1, rowSpan: 4 }, { pos: 14, col: 3, row: 5, rowSpan: 4 },
-            { pos: 22, col: 3, row: 9, rowSpan: 4 }, { pos: 29, col: 3, row: 13, rowSpan: 4 }
-        ],
-        4: [
-            { pos: 3, col: 4, row: 1, rowSpan: 2 }, { pos: 6, col: 4, row: 3, rowSpan: 2 },
-            { pos: 10, col: 4, row: 5, rowSpan: 2 }, { pos: 13, col: 4, row: 7, rowSpan: 2 },
-            { pos: 18, col: 4, row: 9, rowSpan: 2 }, { pos: 21, col: 4, row: 11, rowSpan: 2 },
-            { pos: 25, col: 4, row: 13, rowSpan: 2 }, { pos: 28, col: 4, row: 15, rowSpan: 2 }
-        ],
-        5: [
-            { pos: 1, col: 5, row: 1, rowSpan: 1 }, { pos: 2, col: 5, row: 2, rowSpan: 1 },
-            { pos: 4, col: 5, row: 3, rowSpan: 1 }, { pos: 5, col: 5, row: 4, rowSpan: 1 },
-            { pos: 8, col: 5, row: 5, rowSpan: 1 }, { pos: 9, col: 5, row: 6, rowSpan: 1 },
-            { pos: 11, col: 5, row: 7, rowSpan: 1 }, { pos: 12, col: 5, row: 8, rowSpan: 1 },
-            { pos: 16, col: 5, row: 9, rowSpan: 1 }, { pos: 17, col: 5, row: 10, rowSpan: 1 },
-            { pos: 19, col: 5, row: 11, rowSpan: 1 }, { pos: 20, col: 5, row: 12, rowSpan: 1 },
-            { pos: 23, col: 5, row: 13, rowSpan: 1 }, { pos: 24, col: 5, row: 14, rowSpan: 1 },
-            { pos: 26, col: 5, row: 15, rowSpan: 1 }, { pos: 27, col: 5, row: 16, rowSpan: 1 }
-        ]
+        1: { pos: 31, col: 1, row: 1, rowSpan: 16 }, 2: [{ pos: 15, col: 2, row: 1, rowSpan: 8 }, { pos: 30, col: 2, row: 9, rowSpan: 8 }],
+        3: [{ pos: 7,  col: 3, row: 1, rowSpan: 4 }, { pos: 14, col: 3, row: 5, rowSpan: 4 }, { pos: 22, col: 3, row: 9, rowSpan: 4 }, { pos: 29, col: 3, row: 13, rowSpan: 4 }],
+        4: [{ pos: 3, col: 4, row: 1, rowSpan: 2 }, { pos: 6, col: 4, row: 3, rowSpan: 2 }, { pos: 10, col: 4, row: 5, rowSpan: 2 }, { pos: 13, col: 4, row: 7, rowSpan: 2 }, { pos: 18, col: 4, row: 9, rowSpan: 2 }, { pos: 21, col: 4, row: 11, rowSpan: 2 }, { pos: 25, col: 4, row: 13, rowSpan: 2 }, { pos: 28, col: 4, row: 15, rowSpan: 2 }],
+        5: [{ pos: 1, col: 5, row: 1 }, { pos: 2, col: 5, row: 2 }, { pos: 4, col: 5, row: 3 }, { pos: 5, col: 5, row: 4 }, { pos: 8, col: 5, row: 5 }, { pos: 9, col: 5, row: 6 }, { pos: 11, col: 5, row: 7 }, { pos: 12, col: 5, row: 8 }, { pos: 16, col: 5, row: 9 }, { pos: 17, col: 5, row: 10 }, { pos: 19, col: 5, row: 11 }, { pos: 20, col: 5, row: 12 }, { pos: 23, col: 5, row: 13 }, { pos: 24, col: 5, row: 14 }, { pos: 26, col: 5, row: 15 }, { pos: 27, col: 5, row: 16 }]
     };
-
     [layoutMap[1], ...layoutMap[2], ...layoutMap[3], ...layoutMap[4], ...layoutMap[5]].forEach(p => {
         const individual = results.individuals[p.pos];
         const name = individual ? individual.name.split('[')[0].trim() : '未指定';
         const factor = (individual && individual.factor && individual.stars > 0) ? `${individual.factor}${individual.stars}★` : '';
-        const style = `grid-column: ${p.col}; grid-row: ${p.row} / span ${p.rowSpan};`;
-
+        const style = `grid-column: ${p.col}; grid-row: ${p.row} / span ${p.rowSpan || 1};`;
         html += `<div class="result-cell" style="${style}">`;
         html += `<div class="individual-name">${name}</div>`;
         if (factor) html += `<div class="factor-info">${factor}</div>`;
-
-        // 本人、親、祖父母のみ詳細情報を表示
-        const originalData = inputPedigreePositions.find(ip => ip.pos === p.pos);
-        if (individual && originalData && originalData.gen <= 3) {
+        if (individual && displayPositions.includes(p.pos)) {
             html += `<div class="aptitude-display" style="display:block;">${formatAptitudeTable(results.correctedAptitudes[p.pos], results.changes[p.pos])}</div>`;
             html += generateGenePotentialHTML(results.genePotentials[p.pos]);
         }
         html += '</div>';
     });
-
-    html += '</div>'; // .results-pedigree-container
+    html += '</div>';
     html += `<div class="calculation-info"><h3>補足</h3><ul>` +
             `<li><b>適性補正:</b> 1・2代前の因子☆1/4/7/10個で適性が1/2/3/4段階UP (A上限)。<span style="color:red; font-weight:bold;">赤字</span>は上昇した項目。</li>` +
             `<li><b>遺伝子:</b> 同種因子☆6以上で「獲得」、☆12以上で「確定」と表示。</li>` +
@@ -332,20 +296,32 @@ function displayResults(results) {
     resultDiv.style.display = 'block';
 }
 
-function formatAptitudeTable(correctedApt, changes) {
-    if (!correctedApt) return '';
-    let html = '';
-    const groups = [['芝', 'ダ'], ['短', 'マ', '中', '長'], ['逃', '先', '差', '追']];
-    const typeMap = {'芝':'芝','ダ':'ダート','短':'短距離','マ':'マイル','中':'中距離','長':'長距離','逃':'逃げ','先':'先行','差':'差し','追':'追込'};
-    groups.forEach(group => {
-        html += '<div class="aptitude-group">';
-        group.forEach(label => {
-            const type = typeMap[label];
-            const className = `apt-value rank-${correctedApt[type]}${changes[type] ? ' changed' : ''}`;
-            html += `<div class="aptitude-item"><span class="apt-label">${label}:</span><span class="${className}">${correctedApt[type]}</span></div>`;
+// ★★★★★ 適性表示関数（修正箇所） ★★★★★
+function formatAptitudeTable(aptitudes, changes = {}) {
+    if (!aptitudes) return '';
+    let html = '<table class="aptitude-table">';
+    const layout = [
+        ['芝', 'ダート', '短距離', 'マイル'],
+        ['中距離', '長距離', '逃げ', '先行'],
+        ['差し', '追込', null, null]
+    ];
+    const labels = {'芝':'芝', 'ダート':'ダ', '短距離':'短', 'マイル':'マ', '中距離':'中', '長距離':'長', '逃げ':'逃', '先行':'先', '差し':'差', '追込':'追'};
+    layout.forEach(row => {
+        html += '<tr>';
+        row.forEach(type => { html += `<td>${type ? `<span class="apt-label">${labels[type]}</span>` : ''}</td>`; });
+        html += '</tr><tr>';
+        row.forEach(type => {
+            if (type) {
+                const isChanged = changes[type];
+                const className = `apt-value rank-${aptitudes[type]}${isChanged ? ' changed' : ''}`;
+                html += `<td><span class="${className}">${aptitudes[type]}</span></td>`;
+            } else {
+                html += '<td></td>';
+            }
         });
-        html += '</div>';
+        html += '</tr>';
     });
+    html += '</table>';
     return html;
 }
 

@@ -5,6 +5,8 @@ body {
     margin: 0;
     padding: 20px;
     color: #333;
+    max-width: 1400px; /* bodyの最大幅を設定 */
+    margin: 0 auto; /* 中央寄せ */
 }
 
 h1, h2 {
@@ -13,53 +15,57 @@ h1, h2 {
     margin-bottom: 20px;
 }
 
-/* ▼▼▼【ここから追加・変更】▼▼▼ */
-/* 操作ボタン・インポート/エクスポートエリア */
-.controls-container {
-    max-width: 1200px;
-    margin: 0 auto 20px auto;
-    padding: 15px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+/* タイトル下のコントロール用コンテナ（リセットボタン用） */
+.top-controls-container {
+    max-width: 100%;
+    padding: 0 10px;
+    margin-bottom: 15px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
+    justify-content: flex-end; /* ボタンを右寄せ */
+}
+
+/* 血統表下のコントロール用コンテナ */
+.bottom-controls-container {
+    max-width: 1200px; /* 血統表の幅と合わせる */
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 中央揃え */
     gap: 20px;
 }
 
-.control-group {
-    display: flex;
-    gap: 10px;
-    align-items: center;
+/* インポート/エクスポートセクション */
+.import-export-section {
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box;
 }
 
 .import-group {
-    flex-grow: 1;
     display: flex;
+    gap: 10px;
+    align-items: stretch;
 }
 
 .import-group textarea {
-    width: 100%;
-    min-width: 200px;
-    height: 40px;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.8em;
+    flex-grow: 1;
+    min-height: 50px;
+    padding: 8px;
+    font-size: 0.9em;
 }
 
-.export-container {
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 15px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+/* エクスポートコンテナの表示調整 */
+#export-container {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
 }
 
-.export-container textarea {
+#export-container textarea {
     width: 100%;
     height: 100px;
     margin-top: 10px;
@@ -88,9 +94,14 @@ button:hover {
     background-color: #0056b3;
 }
 
+/* 各ボタンの固有スタイル */
 #calculate-button {
     background-color: #28a745;
+    padding: 12px 40px; /* 大きくする */
+    font-size: 1.2em; /* 文字を大きく */
+    font-weight: bold;
 }
+
 #calculate-button:hover {
     background-color: #218838;
 }
@@ -98,6 +109,7 @@ button:hover {
 #reset-button {
     background-color: #dc3545;
 }
+
 #reset-button:hover {
     background-color: #c82333;
 }
@@ -105,9 +117,8 @@ button:hover {
 #copy-export-button {
     margin-top: 10px;
     display: block;
+    width: 100%; /* 親要素に合わせる */
 }
-
-/* ▲▲▲【ここまで追加・変更】▲▲▲ */
 
 /* 血統表グリッド */
 .pedigree-grid-container {
@@ -115,7 +126,7 @@ button:hover {
     grid-template-columns: repeat(31, 1fr);
     gap: 5px;
     max-width: 100%;
-    overflow-x: auto;
+    overflow-x: auto; /* 横スクロール可能に */
     padding: 10px;
     background: #e9efff;
     border: 1px solid #ccc;
@@ -126,7 +137,7 @@ button:hover {
     border: 1px solid #ccc;
     background-color: #fff;
     padding: 10px;
-    min-width: 200px;
+    min-width: 200px; /* 最小幅 */
     position: relative;
     font-size: 0.9em;
     border-radius: 4px;
@@ -165,7 +176,7 @@ select, .individual-select, .factor-select {
 /* 適性表示スタイル */
 .aptitude-display {
     margin-top: 10px;
-    display: none;
+    display: none; /* 初期は非表示 */
     font-size: 0.85em;
     background-color: #fdfdfd;
     padding: 5px;
@@ -175,7 +186,7 @@ select, .individual-select, .factor-select {
 
 .aptitude-group {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); /* 自動調整グリッド */
     gap: 4px;
     padding-bottom: 4px;
 }
@@ -210,6 +221,7 @@ select, .individual-select, .factor-select {
 .rank-F { background-color: #ccffe6; }
 .rank-G { background-color: #ccffff; }
 
+/* コピーボタン */
 .copy-button {
     position: absolute;
     top: 5px;
@@ -222,10 +234,12 @@ select, .individual-select, .factor-select {
     cursor: pointer;
     border-radius: 3px;
 }
+
 .copy-button:hover {
     background-color: #e0e0e0;
 }
 
+/* 結果表示エリア */
 .results-container {
     max-width: 1200px;
     margin: 20px auto;
@@ -234,3 +248,74 @@ select, .individual-select, .factor-select {
     border: 1px solid #ddd;
     border-radius: 8px;
 }
+
+/* 結果表示内の血統表グリッド（結果表示用） */
+.results-container .pedigree-grid-container {
+    background: none; /* 結果表示では背景色をなくす */
+    border: none; /* 罫線もなし */
+    padding: 0;
+}
+
+/* 結果表示内の個々のセル */
+.results-container .pedigree-cell {
+    border: 1px solid #eee; /* 薄い罫線 */
+    box-shadow: none; /* 影なし */
+    padding: 5px; /* パディングを少し減らす */
+    min-width: unset; /* 最小幅を解除 */
+    display: flex; /* Flexboxで内容を縦並びにする */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.results-container .pedigree-cell-title {
+    margin-bottom: 2px;
+    font-size: 0.8em;
+}
+
+.results-container .aptitude-display {
+    border: none;
+    padding: 0;
+    background-color: transparent;
+}
+
+.results-container .aptitude-group {
+    grid-template-columns: repeat(2, 1fr); /* 2列表示に */
+    gap: 2px;
+}
+
+.results-container .apt-label {
+    font-size: 0.75em;
+}
+
+.results-container .apt-value {
+    font-size: 0.75em;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+}
+
+/* 補正された適性の色 */
+.aptitude-value.changed {
+    color: red;
+    font-weight: bold;
+}
+
+/* 遺伝子付与可能性の表示スタイル */
+.gene-potential {
+    margin-top: 5px;
+    font-size: 0.75em;
+    line-height: 1.2;
+}
+
+.gene-potential strong {
+    color: #0056b3; /* 確定した因子は強調 */
+}
+
+/* 血統表の世代ごとの色分け */
+.gen1 { background-color: #e6f7ff; } /* 本人 */
+.gen2 { background-color: #d9edf7; } /* 親 */
+.gen3 { background-color: #cce9f5; } /* 祖父母 */
+.gen4 { background-color: #bfdaef; } /* 曾祖父母 */
+.gen5 { background-color: #b2cbe9; } /* 高祖父母 */

@@ -58,7 +58,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 });
 
-// ★★★★★ 入力欄生成関数の修正 ★★★★★
 function createPedigreeGrid() {
     const container = document.getElementById('pedigreeGrid');
     if (!container) return;
@@ -110,7 +109,7 @@ function applyDataToForm(data) {
         const indSel = document.getElementById(`individual_${pos}`);
         if (indSel && data[`individual_${pos}`]) {
             indSel.value = data[`individual_${pos}`];
-            // 因子情報を先に設定してからイベントを発火させる
+            indSel.dispatchEvent(new Event('change'));
             if (p.displayFactor) {
                 const facSel = document.getElementById(`factor_${p.pos}`);
                 if (facSel && data[`factor_${p.pos}`]) facSel.value = data[`factor_${p.pos}`];
@@ -119,7 +118,6 @@ function applyDataToForm(data) {
                     if (starRad) starRad.checked = true;
                 }
             }
-            indSel.dispatchEvent(new Event('change'));
         }
     });
 }
@@ -148,8 +146,9 @@ function handleExport() {
 function initializeDropdowns() {
     const horseNames = horseData.map(horse => horse.名前).sort();
     const handler = (e) => {
-        if (e.target.classList.contains('individual-select')) {
-            updateHorseSelection(e.target.id.split('_')[1], e.target.value);
+        const target = e.target;
+        if (target.classList.contains('individual-select')) {
+            updateHorseSelection(target.id.split('_')[1], target.value);
         }
         saveStateToLocalStorage();
     };
@@ -308,27 +307,27 @@ function formatAptitudeTable(aptitudes, changes = {}) {
     if (!aptitudes) return '';
     let html = '<table class="aptitude-table">';
     const layout = [
-        ['芝', 'ダート', '短距離', 'マイル'],
-        ['中距離', '長距離', '逃げ', '先行'],
-        ['差し', '追込', null, null]
+        ['芝', 'ダート'],
+        ['短距離', 'マイル', '中距離', '長距離'],
+        ['逃げ', '先行', '差し', '追込']
     ];
     const labels = {'芝':'芝', 'ダート':'ダ', '短距離':'短', 'マイル':'マ', '中距離':'中', '長距離':'長', '逃げ':'逃', '先行':'先', '差し':'差', '追込':'追'};
+    
     layout.forEach(row => {
         html += '<tr>';
-        row.forEach(type => { html += `<td>${type ? `<span class="apt-label">${labels[type]}</span>` : ''}</td>`; });
+        row.forEach(type => {
+            html += `<td><span class="apt-label">${labels[type]}</span></td>`;
+        });
         html += '</tr><tr>';
         row.forEach(type => {
-            if (type) {
-                const rank = aptitudes[type] || 'G'; // データがない場合はGとして扱う
-                const isChanged = changes[type] || false;
-                const className = `apt-value rank-${rank}${isChanged ? ' changed' : ''}`;
-                html += `<td><span class="${className}">${rank}</span></td>`;
-            } else {
-                html += '<td></td>';
-            }
+            const rank = aptitudes[type] || 'G';
+            const isChanged = changes[type] || false;
+            const className = `apt-value rank-${rank}${isChanged ? ' changed' : ''}`;
+            html += `<td><span class="${className}">${rank}</span></td>`;
         });
         html += '</tr>';
     });
+
     html += '</table>';
     return html;
 }

@@ -143,21 +143,26 @@ select, .individual-select, .factor-select {
 
 /* ★★★★★ 適性表示スタイル（修正箇所） ★★★★★ */
 .aptitude-display {
-    margin-top: 5px;
+    margin-top: 8px;
+    font-size: 0.9em;
+    border-top: 1px dashed #ccc;
+    padding-top: 5px;
+    width: 100%;
 }
 .aptitude-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.9em;
-    table-layout: fixed;
+    margin-top: 1px;
+    font-size: 1.0em;
 }
 .aptitude-table td {
+    border: 1px solid #ddd;
     text-align: center;
     padding: 1px;
 }
 .apt-label {
+    font-size: 1.0em;
     font-weight: bold;
-    font-size: 0.9em;
 }
 .apt-value {
     display: inline-block;
@@ -219,6 +224,15 @@ select, .individual-select, .factor-select {
     flex-direction: column;
     justify-content: center;
     gap: 3px;
+}
+.result-cell .aptitude-table {
+    font-size: 0.9em;
+}
+.result-cell .apt-value {
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    font-size: 0.85em;
 }
 .individual-name { font-weight: bold; font-size: 1.1em; }
 .factor-info { color: #0056b3; font-weight: bold; }

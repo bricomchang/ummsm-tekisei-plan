@@ -395,4 +395,10 @@ function calculateAndDisplayResults() {
     let infoHtml = '<ul>';
     factorTypes.forEach(type => {
         const base = baseAptitudes[type], final = finalAptitudes[type];
-        if (base !== final
+        if (base !== final) {
+            infoHtml += `<li><strong>${type}</strong>: 因子合計 ${totalFactors[type]} で ${base} → <strong class="aptitude-value changed">${final}</strong> にアップ</li>`;
+        }
+    });
+    infoHtml += '</ul>';
+    calculationInfo.innerHTML = infoHtml;
+}

@@ -88,7 +88,7 @@ select, .individual-select, .factor-select {
     display: flex; align-items: center; font-size: 0.9em; cursor: pointer;
 }
 
-/* ★★★★★ 適性表示テーブルのスタイル (修正箇所) ★★★★★ */
+/* 適性表示テーブルのスタイル */
 .aptitude-display {
     margin-top: 8px;
     border-top: 1px dashed #ccc;
@@ -100,14 +100,14 @@ select, .individual-select, .factor-select {
     width: 100%;
     border-collapse: collapse;
     font-size: 1em;
-    table-layout: fixed; /* テーブルのレイアウトを固定 */
+    table-layout: fixed;
 }
 
 .aptitude-table td {
     border: 1px solid #ddd;
     text-align: center;
     padding: 3px;
-    height: 24px; /* セルの高さを固定 */
+    height: 24px;
 }
 
 .aptitude-table .apt-label {
@@ -115,7 +115,6 @@ select, .individual-select, .factor-select {
     font-weight: bold;
 }
 
-/* 適性ランクのセルに背景色を適用 */
 .aptitude-table .apt-value {
     font-weight: bold;
 }
@@ -156,6 +155,7 @@ select, .individual-select, .factor-select {
     border-radius: 8px;
 }
 
+/* ★★★★★ レイアウト崩れ修正箇所 ★★★★★ */
 .result-cell {
     background-color: #fff;
     border: 1px solid #ccc;
@@ -165,12 +165,13 @@ select, .individual-select, .factor-select {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    min-width: 220px; /* 入力セルと最小幅を揃える */
 }
 
 .result-cell .individual-name { font-weight: bold; font-size: 1.1em; text-align: center;}
 .result-cell .factor-info { color: #0056b3; font-weight: bold; text-align: center; }
 
-/* ★★★★★ 遺伝子付与可能性のスタイル (追加) ★★★★★ */
+/* 遺伝子付与可能性のスタイル */
 .gene-potentials {
     margin-top: 5px;
     padding-top: 5px;

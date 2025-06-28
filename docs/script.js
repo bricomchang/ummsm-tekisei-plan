@@ -154,7 +154,7 @@ function initializeDropdowns() {
     };
     document.querySelectorAll('.individual-select').forEach(s => { horseNames.forEach(n => { const o = document.createElement('option'); o.value = n; o.textContent = n; s.appendChild(o); }); s.addEventListener('change', handler); });
     document.querySelectorAll('.factor-select').forEach(s => { factorTypes.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; s.appendChild(o); }); s.addEventListener('change', handler); });
-    document.querySelectorAll('input[type="radio"]').forEach(r => r.addEventListener('change', handler);
+    document.querySelectorAll('input[type="radio"]').forEach(r => r.addEventListener('change', handler));
 }
 
 function updateHorseSelection(pos, horseName) {

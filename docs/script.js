@@ -93,6 +93,7 @@ function createPedigreeGrid() {
         
         cell.style.gridRow = p.row + ' / span ' + span;
         
+        // 修正: 続柄表記を削除
         let content = `<div class="pedigree-cell-title"></div>`;
         
         if (p.displayFactor) {
@@ -113,7 +114,7 @@ function createPedigreeGrid() {
             }
             content += `</div>`;
             
-            // 4代目・5代目は適性表示なし
+            // 修正: 4代目・5代目は適性表示なし
             if (p.gen <= 3) {
                 content += `<div class="aptitude-display" data-position="${p.pos}"></div>`;
             }
@@ -124,6 +125,7 @@ function createPedigreeGrid() {
             content += `<div class="aptitude-display" data-position="${p.pos}"></div>`;
         }
         
+        // 修正: コピーボタンを母方祖父・祖母にのみ配置
         if (p.pos === 22 || p.pos === 29) {
             content += `<button class="copy-button" data-position="${p.pos}">父方からコピー</button>`;
         }
@@ -159,7 +161,7 @@ function updateAptitudeDisplay(select) {
     if (selectedHorse) {
         const horseData_item = horseData.find(h => h['名前'] === selectedHorse);
         if (horseData_item) {
-            // 3段6行の適性表示
+            // 修正: 3段6行の適性表示
             let html = '<table class="aptitude-table">';
             
             // 1段目: 芝・ダート
@@ -209,8 +211,8 @@ function setupCopyButtons() {
     });
 }
 
+// 修正: コピー機能を追加
 function copyPedigreeData(sourcePosition) {
-    // 修正: 正しいコピー機能の実装
     let sourcePositions = [];
     let targetPositions = [];
     
@@ -226,7 +228,7 @@ function copyPedigreeData(sourcePosition) {
         targetPositions = [14, 10, 13, 8, 9, 11, 12];
     }
     
-    // 修正: コピー元の情報を保存してからコピー実行
+    // コピー元の情報を保存
     const copyData = [];
     for (let i = 0; i < sourcePositions.length; i++) {
         const sourceCell = document.querySelector(`[data-position="${sourcePositions[i]}"]`);
@@ -282,13 +284,13 @@ function copyPedigreeData(sourcePosition) {
 }
 
 function setupControlButtons() {
-    const calculateBtn = document.getElementById('calculate-button');
-    const resetBtn = document.getElementById('reset-button');
-    const importBtn = document.getElementById('import-button');
-    const exportBtn = document.getElementById('export-button');
-    const copyExportBtn = document.getElementById('copy-export-button');
+    // 修正: 正しいIDでボタンを取得
+    const calculateBtn = document.getElementById('calculate');
+    const resetBtn = document.getElementById('reset');
+    const importBtn = document.getElementById('import');
+    const exportBtn = document.getElementById('export');
+    const copyExportBtn = document.getElementById('copy-export');
     
-    // 修正: 計算ボタンのイベントリスナーを正しく設定
     if (calculateBtn) {
         calculateBtn.addEventListener('click', function(e) {
             e.preventDefault();
@@ -328,6 +330,7 @@ function calculateResults() {
         return;
     }
     
+    // 修正: 全世代（4代目・5代目も含む）の因子を集計
     const factorCounts = {};
     factorTypes.forEach(type => factorCounts[type] = 0);
     
@@ -545,7 +548,7 @@ function displayResults(results, targetHorse) {
                 const aptitudeTable = document.createElement('table');
                 aptitudeTable.className = 'aptitude-table';
                 
-                // 3段6行の適性表示
+                // 修正: 結果表示も3段6行に変更
                 let html = '';
                 
                 // 1段目: 芝・ダート
@@ -696,13 +699,15 @@ function resetAllInputs() {
         document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
         
         localStorage.removeItem(LOCAL_STORAGE_KEY);
-        document.getElementById('resultsContainer').style.display = 'none';
+        const resultsContainer = document.getElementById('resultsContainer');
+        if (resultsContainer) resultsContainer.style.display = 'none';
     }
 }
 
 function saveStateToLocalStorage() {
     const state = {};
     
+    // 修正: 全世代の入力状態を保存
     inputPedigreePositions.forEach(p => {
         const cell = document.querySelector(`[data-position="${p.pos}"]`);
         if (cell) {
@@ -738,6 +743,7 @@ function loadStateFromLocalStorage() {
     try {
         const state = JSON.parse(savedState);
         
+        // 修正: 全世代の入力状態を復元
         inputPedigreePositions.forEach(p => {
             const cell = document.querySelector(`[data-position="${p.pos}"]`);
             if (cell) {
@@ -800,12 +806,19 @@ function exportData() {
     });
     
     const exportText = JSON.stringify(state, null, 2);
-    document.getElementById('export-data').value = exportText;
-    document.getElementById('export-container').style.display = 'block';
+    const exportDataElement = document.getElementById('export-data');
+    if (exportDataElement) {
+        exportDataElement.value = exportText;
+        const exportContainer = document.getElementById('export-container');
+        if (exportContainer) exportContainer.style.display = 'block';
+    }
 }
 
 function importData() {
-    const importText = document.getElementById('import-data').value.trim();
+    const importDataElement = document.getElementById('import-data');
+    if (!importDataElement) return;
+    
+    const importText = importDataElement.value.trim();
     if (!importText) {
         alert('インポートするデータを入力してください。');
         return;
@@ -852,7 +865,7 @@ function importData() {
         
         saveStateToLocalStorage();
         alert('データをインポートしました。');
-        document.getElementById('import-data').value = '';
+        importDataElement.value = '';
     } catch (error) {
         console.error('インポートエラー:', error);
         alert('データの形式が正しくありません。');
@@ -860,9 +873,9 @@ function importData() {
 }
 
 function copyExportData() {
-    const exportData = document.getElementById('export-data').value;
-    if (exportData) {
-        navigator.clipboard.writeText(exportData).then(() => {
+    const exportDataElement = document.getElementById('export-data');
+    if (exportDataElement && exportDataElement.value) {
+        navigator.clipboard.writeText(exportDataElement.value).then(() => {
             alert('エクスポートデータをクリップボードにコピーしました。');
         });
     }

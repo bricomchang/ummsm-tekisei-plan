@@ -166,8 +166,15 @@ select, .individual-select, .factor-select {
     font-weight: bold;
     color: #333;
 }
+/* 修正: 変化した適性値の赤文字表示 */
 .aptitude-value.changed {
-    color: red; /* 変更された値は赤字に */
+    color: red !important; /* 変更された値は赤字に */
+    font-weight: bold;
+}
+
+/* 結果表示での適性値の赤文字表示 */
+.result-cell .aptitude-table td.changed {
+    color: red !important;
     font-weight: bold;
 }
 

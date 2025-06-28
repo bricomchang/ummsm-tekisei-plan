@@ -16,14 +16,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     let horseData = [];
     const LOCAL_STORAGE_KEY = 'umamusumePedigreeData';
 
-    // 子から親のポジションを引くためのマップ
-    const childToParentsMap = {
-        31: [15, 30], 15: [7, 14], 30: [22, 29],
-        7: [3, 6], 14: [10, 13], 22: [18, 21], 29: [25, 28],
-        3: [1, 2], 6: [4, 5], 10: [8, 9], 13: [11, 12],
-        18: [16, 17], 21: [19, 20], 25: [23, 24], 28: [26, 27]
-    };
-
     async function loadCSV() {
         const response = await fetch('umadata.csv');
         if (!response.ok) throw new Error('CSVの読み込みに失敗しました。');
@@ -170,6 +162,19 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
+    // ★★★★★ 修正箇所 ★★★★★
+    // 継承ルールに則った、因子集計対象の祖先を取得する関数
+    function getFactorSourcePositions(pos) {
+        if (pos === 31) { // 本人の場合、親と祖父母の6名
+            return [15, 30, 7, 14, 22, 29];
+        } else if (pos === 15 || pos === 30) { // 親の場合、その親と祖父母の6名
+            return getAncestorsForGenePotential(pos);
+        } else if (pos === 7 || pos === 14 || pos === 22 || pos === 29) { // 祖父母の場合、その親と祖父母の6名
+            return getAncestorsForGenePotential(pos);
+        }
+        return [];
+    }
+
     function getAncestorsForGenePotential(pos) {
         let ancestors = [];
         if (pos === 31) { ancestors = [15, 30, 7, 14, 22, 29]; }
@@ -215,27 +220,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         return html;
     }
 
-    // ★★★★★ 修正箇所 ★★★★★
-    // 特定の位置のウマ娘の、全ての祖先を取得するヘルパー関数
-    function getAncestorPositions(startPos) {
-        const ancestors = new Set();
-        const queue = [startPos];
-        const visited = new Set();
-
-        while (queue.length > 0) {
-            const currentPos = queue.shift();
-            if (visited.has(currentPos)) continue;
-            visited.add(currentPos);
-
-            const parentPositions = childToParentsMap[currentPos] || [];
-            for (const parentPos of parentPositions) {
-                ancestors.add(parentPos);
-                queue.push(parentPos);
-            }
-        }
-        return Array.from(ancestors);
-    }
-
     function calculate() {
         const resultsContainer = document.getElementById('resultsContainer');
         resultsContainer.style.display = 'block';
@@ -272,18 +256,17 @@ document.addEventListener('DOMContentLoaded', async function() {
             let tableHTML = '';
             let geneHTML = '';
             
-            // 3代目まで（本人・親・祖父母）は適性計算と遺伝子可能性計算を行う
             if (p.gen <= 3) {
                 const horseDataEntry = horseData.find(h => h['名前'] === horseName);
                 let calculatedRanks = {};
 
                 if (horseDataEntry) {
-                    // このウマ娘の祖先を取得
-                    const ancestorPositions = getAncestorPositions(p.pos);
-                    // 祖先からの因子を集計
+                    // ルールに則った因子源を取得
+                    const factorSourcePositions = getFactorSourcePositions(p.pos);
+                    
                     const factorCounts = {};
                     factorTypes.forEach(type => factorCounts[type] = 0);
-                    ancestorPositions.forEach(ancPos => {
+                    factorSourcePositions.forEach(ancPos => {
                         const ancFactor = formData['factor_' + ancPos];
                         const ancStar = formData['star_' + ancPos];
                         if (ancFactor && ancStar) {
@@ -291,7 +274,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                         }
                     });
 
-                    // 適性向上を計算
                     factorTypes.forEach(type => {
                         const baseRankIndex = aptitudeRanks.indexOf(horseDataEntry[type] || 'G');
                         let increase = 0;
@@ -309,7 +291,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 const genePotentials = calculateGenePotential(p.pos, formData);
                 geneHTML = generateGenePotentialHTML(genePotentials);
 
-            } else { // 4, 5代目はプレースホルダー
+            } else {
                 tableHTML = '<div class="aptitude-table-placeholder"></div>';
                 geneHTML = '<div class="gene-potentials-placeholder"></div>';
             }

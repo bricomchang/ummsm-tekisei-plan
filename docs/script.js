@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     ];
     const factorTypes = ['芝', 'ダート', '短距離', 'マイル', '中距離', '長距離', '逃げ', '先行', '差し', '追込'];
     const aptitudeRanks = ['G', 'F', 'E', 'D', 'C', 'B', 'A'];
-    // 適性表のレイアウト定義
     const APTITUDE_TABLE_LAYOUT = [
         { labels: ['芝', 'ダート'], keys: ['芝', 'ダート'] },
         { labels: ['短', 'マ', '中', '長'], keys: ['短距離', 'マイル', '中距離', '長距離'] },
@@ -17,7 +16,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     let horseData = [];
     const LOCAL_STORAGE_KEY = 'umamusumePedigreeData';
 
-    // CSVデータ読み込み
     async function loadCSV() {
         const response = await fetch('umadata.csv');
         if (!response.ok) throw new Error('CSVの読み込みに失敗しました。');
@@ -79,15 +77,12 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
-    // 6x4の適性表HTMLを生成
     function createAptitudeTableHTML(horseName, calculatedRanks = {}) {
         const horse = horseData.find(h => h['名前'] === horseName);
-        if (!horse) return '';
+        if (!horse) return '<div class="aptitude-table-placeholder"></div>';
         
         let html = '<table class="aptitude-table">';
         const [ground, distance, strategy] = APTITUDE_TABLE_LAYOUT;
-
-        // 1-2行目: バ場
         html += '<tr>';
         ground.labels.forEach(label => html += `<td class="apt-label">${label}</td>`);
         html += '<td class="apt-label empty" colspan="2"></td></tr>';
@@ -98,8 +93,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             html += `<td class="apt-value rank-${rank}${changed}">${rank}</td>`;
         });
         html += '<td class="apt-value empty" colspan="2"></td></tr>';
-        
-        // 3-4行目: 距離
         html += '<tr>';
         distance.labels.forEach(label => html += `<td class="apt-label">${label}</td>`);
         html += '</tr>';
@@ -110,8 +103,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             html += `<td class="apt-value rank-${rank}${changed}">${rank}</td>`;
         });
         html += '</tr>';
-        
-        // 5-6行目: 脚質
         html += '<tr>';
         strategy.labels.forEach(label => html += `<td class="apt-label">${label}</td>`);
         html += '</tr>';
@@ -121,9 +112,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             const changed = calculatedRanks[key]?.changed ? ' changed' : '';
             html += `<td class="apt-value rank-${rank}${changed}">${rank}</td>`;
         });
-        html += '</tr>';
-
-        html += '</table>';
+        html += '</tr></table>';
         return html;
     }
     
@@ -171,7 +160,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
-    // --- 遺伝子付与可能性の関数 (ここから) ---
     function getAncestorsForGenePotential(pos) {
         let ancestors = [];
         if (pos === 31) { ancestors = [15, 30, 7, 14, 22, 29]; }
@@ -204,8 +192,9 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     function generateGenePotentialHTML(genePotentials) {
-        if (genePotentials.length === 0) return '';
-        let html = '<div class="gene-potentials"><div>遺伝子付与可能性</div>';
+        if (genePotentials.length === 0) return '<div class="gene-potentials-placeholder"></div>';
+        // 「遺伝子付与可能性」の文言を削除
+        let html = '<div class="gene-potentials">';
         genePotentials.forEach(gene => {
             if (gene.status === 'confirmed') {
                 html += `<div class="gene-confirmed">${gene.type}遺伝子確定</div>`;
@@ -216,7 +205,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         html += '</div>';
         return html;
     }
-    // --- 遺伝子付与可能性の関数 (ここまで) ---
 
     function calculate() {
         const resultsContainer = document.getElementById('resultsContainer');
@@ -226,7 +214,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         resultsGrid.className = 'results-pedigree-container';
         resultsContainer.appendChild(resultsGrid);
         
-        // 全入力データを取得
         const formData = {};
         inputPedigreePositions.forEach(p => {
             const pos = p.pos;
@@ -237,7 +224,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         });
 
-        // 因子合計を計算
         const factorCounts = {};
         factorTypes.forEach(type => factorCounts[type] = 0);
         inputPedigreePositions.forEach(p => {
@@ -274,7 +260,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             let nameHTML = `<div class="individual-name">${horseName || (p.pos === 31 ? '未指定' : '')}</div>`;
             const factor = formData['factor_' + p.pos];
             const star = formData['star_' + p.pos];
-            let factorHTML = (p.displayFactor && factor && star) ? `<div class="factor-info">${factor} ☆${star}</div>` : '';
+            let factorHTML = (p.displayFactor && factor && star) ? `<div class="factor-info">${factor} ☆${star}</div>` : '<div class="factor-info-placeholder"></div>';
             let tableHTML = '';
             let geneHTML = '';
 
@@ -286,6 +272,10 @@ document.addEventListener('DOMContentLoaded', async function() {
                 }
                 const genePotentials = calculateGenePotential(p.pos, formData);
                 geneHTML = generateGenePotentialHTML(genePotentials);
+            } else {
+                // 4, 5代目は空のプレースホルダーを追加して高さを揃える
+                tableHTML = '<div class="aptitude-table-placeholder"></div>';
+                geneHTML = '<div class="gene-potentials-placeholder"></div>';
             }
             
             cell.innerHTML = nameHTML + factorHTML + tableHTML + geneHTML;

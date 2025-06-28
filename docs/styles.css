@@ -5,7 +5,7 @@ body {
     margin: 0;
     padding: 20px;
     color: #333;
-    max-width: 1400px;
+    max-width: 1500px; /* 全体の幅を少し広げる */
     margin: 0 auto;
 }
 
@@ -112,9 +112,9 @@ button:hover { background-color: #0056b3; }
     border: 1px solid #ccc;
     background-color: #fff;
     padding: 10px;
-    min-width: 200px;
+    min-width: 220px; /* 幅を少し広げる */
     position: relative;
-    font-size: 0.9em;
+    font-size: 0.95em; /* 文字を少し大きく */
     border-radius: 4px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
@@ -123,7 +123,7 @@ button:hover { background-color: #0056b3; }
     font-weight: bold;
     margin-bottom: 5px;
     color: #003366;
-    font-size: 0.9em;
+    font-size: 1em;
 }
 
 select, .individual-select, .factor-select {
@@ -144,7 +144,6 @@ select, .individual-select, .factor-select {
 /* ★★★★★ 適性表示スタイル（修正箇所） ★★★★★ */
 .aptitude-display {
     margin-top: 8px;
-    font-size: 0.9em;
     border-top: 1px dashed #ccc;
     padding-top: 5px;
     width: 100%;
@@ -153,40 +152,33 @@ select, .individual-select, .factor-select {
     width: 100%;
     border-collapse: collapse;
     margin-top: 1px;
-    font-size: 1.0em;
 }
 .aptitude-table td {
     border: 1px solid #ddd;
     text-align: center;
-    padding: 1px;
+    padding: 2px; /* 少しパディングを調整 */
+    font-size: 1em; /* 文字サイズ調整 */
 }
 .apt-label {
-    font-size: 1.0em;
     font-weight: bold;
 }
 .apt-value {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    line-height: 20px;
-    border-radius: 3px;
     font-weight: bold;
-    font-size: 0.9em;
-    border: 1px solid rgba(0,0,0,0.1);
     color: #333;
 }
+.aptitude-value.changed {
+    color: red; /* 変更された値は赤字に */
+    font-weight: bold;
+}
 
-/* 適性ランクの背景色 */
-.rank-A { background-color: #ffddc9; }
-.rank-B { background-color: #ffcccc; }
-.rank-C { background-color: #ccffcc; }
-.rank-D { background-color: #cce6ff; }
-.rank-E { background-color: #e6ccff; }
-.rank-F { background-color: #ccccff; }
-.rank-G { background-color: #e0e0e0; }
-
-/* 補正された適性の文字色 */
-.aptitude-value.changed { color: red; font-weight: bold; }
+/* 適性ランクの背景色をセルに適用 */
+td.rank-A { background-color: #ffddc9; }
+td.rank-B { background-color: #ffcccc; }
+td.rank-C { background-color: #ccffcc; }
+td.rank-D { background-color: #cce6ff; }
+td.rank-E { background-color: #e6ccff; }
+td.rank-F { background-color: #ccccff; }
+td.rank-G { background-color: #e0e0e0; }
 
 /* コピーボタン */
 .copy-button {
@@ -206,9 +198,9 @@ select, .individual-select, .factor-select {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     grid-template-rows: repeat(16, auto);
-    gap: 5px;
+    gap: 4px; /* 隙間を詰める */
     background-color: #f0f8ff;
-    padding: 10px;
+    padding: 8px;
     border: 1px solid #ccc;
     border-radius: 8px;
     min-height: 600px;
@@ -217,28 +209,25 @@ select, .individual-select, .factor-select {
     background-color: #fff;
     border: 1px solid #ccc;
     border-radius: 4px;
-    padding: 5px;
-    font-size: 0.8em;
+    padding: 4px; /* パディングを詰める */
+    font-size: 0.85em; /* 文字を少し大きく */
     text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 3px;
+    gap: 2px;
 }
 .result-cell .aptitude-table {
-    font-size: 0.9em;
+    font-size: 1em;
 }
-.result-cell .apt-value {
-    width: 16px;
-    height: 16px;
-    line-height: 16px;
-    font-size: 0.85em;
+.result-cell .aptitude-table td {
+    padding: 1px;
 }
-.individual-name { font-weight: bold; font-size: 1.1em; }
-.factor-info { color: #0056b3; font-weight: bold; }
+.individual-name { font-weight: bold; font-size: 1.15em; } /* 名前を大きく */
+.factor-info { color: #0056b3; font-weight: bold; font-size: 1.05em; }
 .gene-potential {
-    margin-top: 4px; padding-top: 4px; border-top: 1px dashed #ccc;
-    font-size: 0.9em; line-height: 1.2;
+    margin-top: 3px; padding-top: 3px; border-top: 1px dashed #ccc;
+    font-size: 0.95em; line-height: 1.3;
 }
 .gene-potential strong { color: #d9534f; }
 .calculation-info {

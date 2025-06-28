@@ -106,9 +106,9 @@ function loadStateFromLocalStorage() { const data = localStorage.getItem(LOCAL_S
 function applyDataToForm(data) {
     inputPedigreePositions.forEach(p => {
         const pos = p.pos;
-        const indSel = document.getElementById(`individual_${pos}`);
-        if (indSel && data[`individual_${pos}`]) {
-            indSel.value = data[`individual_${pos}`];
+        const indSel = document.getElementById(`individual_${p.pos}`);
+        if (indSel && data[`individual_${p.pos}`]) {
+            indSel.value = data[`individual_${p.pos}`];
             indSel.dispatchEvent(new Event('change'));
             if (p.displayFactor) {
                 const facSel = document.getElementById(`factor_${p.pos}`);
@@ -154,7 +154,7 @@ function initializeDropdowns() {
     };
     document.querySelectorAll('.individual-select').forEach(s => { horseNames.forEach(n => { const o = document.createElement('option'); o.value = n; o.textContent = n; s.appendChild(o); }); s.addEventListener('change', handler); });
     document.querySelectorAll('.factor-select').forEach(s => { factorTypes.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; s.appendChild(o); }); s.addEventListener('change', handler); });
-    document.querySelectorAll('input[type="radio"]').forEach(r => r.addEventListener('change', handler));
+    document.querySelectorAll('input[type="radio"]').forEach(r => r.addEventListener('change', handler);
 }
 
 function updateHorseSelection(pos, horseName) {
@@ -227,6 +227,7 @@ function copyIndividualData(fromPos, toPos) {
     if (toStar) toStar.checked = true;
 }
 
+
 function calculateAptitudes() {
     const formData = collectFormData();
     const results = { individuals: {}, originalAptitudes: {}, correctedAptitudes: {}, changes: {}, genePotentials: {} };
@@ -269,6 +270,7 @@ function calculateGenePotential(pos, formData) {
     return potentials.sort((a, b) => b.stars - a.stars).slice(0, 3);
 }
 
+// ★★★★★ 結果表示関数（修正箇所） ★★★★★
 function displayResults(results) {
     const resultDiv = document.getElementById('results');
     if (!resultDiv) return;
@@ -315,22 +317,19 @@ function formatAptitudeTable(aptitudes, changes = {}) {
     
     layout.forEach(row => {
         html += '<tr>';
-        row.forEach(type => {
-            html += `<td><span class="apt-label">${labels[type]}</span></td>`;
-        });
+        row.forEach(type => { html += `<td><span class="apt-label">${labels[type]}</span></td>`; });
         html += '</tr><tr>';
         row.forEach(type => {
             const rank = aptitudes[type] || 'G';
             const isChanged = changes[type] || false;
-            const className = `apt-value rank-${rank}${isChanged ? ' changed' : ''}`;
-            html += `<td><span class="${className}">${rank}</span></td>`;
+            html += `<td class="rank-${rank}"><span class="apt-value${isChanged ? ' changed' : ''}">${rank}</span></td>`;
         });
         html += '</tr>';
     });
-
     html += '</table>';
     return html;
 }
+
 
 function generateGenePotentialHTML(potentials) {
     if (!potentials || potentials.length === 0) return '';

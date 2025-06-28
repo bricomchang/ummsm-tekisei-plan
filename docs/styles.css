@@ -143,24 +143,31 @@ select, .individual-select, .factor-select {
 
 /* 適性表示スタイル（入力フォーム・結果共通） */
 .aptitude-display {
-    margin-top: 10px; font-size: 0.85em;
+    margin-top: 5px;
 }
 .aptitude-group {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 2px; padding-bottom: 2px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(45px, 1fr));
+    gap: 2px;
+    padding-bottom: 2px;
 }
 .aptitude-item {
-    display: flex; align-items: center; font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    font-size: 0.9em;
 }
 .apt-label {
-    font-weight: bold; margin-right: 4px;
+    font-weight: bold;
+    margin-right: 4px;
+    font-size: 0.9em;
 }
 .apt-value {
-    width: 18px; height: 18px; line-height: 18px; display: inline-block;
+    width: 16px; height: 16px; line-height: 16px; display: inline-block;
     text-align: center; border-radius: 3px; font-weight: bold;
-    font-size: 0.9em; border: 1px solid rgba(0,0,0,0.1);
+    font-size: 0.85em; border: 1px solid rgba(0,0,0,0.1);
 }
 
-/* ★★★★★ ランク表示の背景色（修正箇所） ★★★★★ */
+/* 適性ランクの背景色 */
 .apt-value { color: #333; } /* 文字色を黒系に統一 */
 .rank-A { background-color: #ffddc9; } /* 薄いオレンジ */
 .rank-B { background-color: #ffcccc; } /* 薄い赤 */
@@ -169,6 +176,7 @@ select, .individual-select, .factor-select {
 .rank-E { background-color: #e6ccff; } /* 薄い紫 */
 .rank-F { background-color: #ccccff; } /* 薄い紺 */
 .rank-G { background-color: #e0e0e0; } /* 薄いグレー */
+
 /* 補正された適性の文字色 */
 .aptitude-value.changed { color: red; font-weight: bold; }
 
@@ -182,35 +190,39 @@ select, .individual-select, .factor-select {
 
 /* ★★★★★ 結果表示エリア（修正箇所） ★★★★★ */
 .results-container {
-    max-width: 1200px; margin: 20px auto; padding: 15px;
+    max-width: 100%; /* 幅を広げる */
+    margin: 20px auto; padding: 15px;
     background-color: #fff; border: 1px solid #ddd; border-radius: 8px;
 }
 /* 結果表示用の血統表グリッド */
 .results-pedigree-container {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(5, 1fr); /* 5世代分の列 */
+    grid-template-rows: repeat(16, auto); /* 高祖父母世代の16行 */
     gap: 5px;
     background-color: #f0f8ff;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 8px;
+    min-height: 600px; /* 最小の高さを確保 */
 }
 .result-cell {
     background-color: #fff;
     border: 1px solid #ccc;
     border-radius: 4px;
-    padding: 8px;
-    font-size: 0.85em;
+    padding: 5px;
+    font-size: 0.8em;
     text-align: center;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    justify-content: center; /* 内容を中央に */
+    gap: 3px;
 }
 .individual-name { font-weight: bold; font-size: 1.1em; }
 .factor-info { color: #0056b3; font-weight: bold; }
 .gene-potential {
-    margin-top: 5px; padding-top: 5px; border-top: 1px dashed #ccc;
-    font-size: 0.9em; line-height: 1.3;
+    margin-top: 4px; padding-top: 4px; border-top: 1px dashed #ccc;
+    font-size: 0.9em; line-height: 1.2;
 }
 .gene-potential strong { color: #d9534f; }
 .calculation-info {

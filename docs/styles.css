@@ -5,8 +5,8 @@ body {
     margin: 0;
     padding: 20px;
     color: #333;
-    max-width: 1400px; /* bodyの最大幅を設定 */
-    margin: 0 auto; /* 中央寄せ */
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 h1, h2 {
@@ -15,26 +15,25 @@ h1, h2 {
     margin-bottom: 20px;
 }
 
-/* タイトル下のコントロール用コンテナ（リセットボタン用） */
+/* コントロール用コンテナ */
 .top-controls-container {
     max-width: 100%;
     padding: 0 10px;
     margin-bottom: 15px;
     display: flex;
-    justify-content: flex-end; /* ボタンを右寄せ */
+    justify-content: flex-end;
 }
 
-/* 血統表下のコントロール用コンテナ */
 .bottom-controls-container {
-    max-width: 1200px; /* 血統表の幅と合わせる */
+    max-width: 1200px;
     margin: 20px auto;
     display: flex;
     flex-direction: column;
-    align-items: center; /* 中央揃え */
+    align-items: center;
     gap: 20px;
 }
 
-/* インポート/エクスポートセクション */
+/* インポート/エクスポート */
 .import-export-section {
     width: 100%;
     max-width: 800px;
@@ -58,7 +57,6 @@ h1, h2 {
     font-size: 0.9em;
 }
 
-/* エクスポートコンテナの表示調整 */
 #export-container {
     margin-top: 20px;
     padding-top: 20px;
@@ -78,7 +76,7 @@ h1, h2 {
     font-size: 0.9em;
 }
 
-/* ボタン共通スタイル */
+/* ボタン */
 button {
     background-color: #007bff;
     color: white;
@@ -90,43 +88,20 @@ button {
     transition: background-color 0.2s;
 }
 
-button:hover {
-    background-color: #0056b3;
-}
+button:hover { background-color: #0056b3; }
+#calculate-button { background-color: #28a745; padding: 12px 40px; font-size: 1.2em; font-weight: bold; }
+#calculate-button:hover { background-color: #218838; }
+#reset-button { background-color: #dc3545; }
+#reset-button:hover { background-color: #c82333; }
+#copy-export-button { margin-top: 10px; display: block; width: 100%; }
 
-/* 各ボタンの固有スタイル */
-#calculate-button {
-    background-color: #28a745;
-    padding: 12px 40px; /* 大きくする */
-    font-size: 1.2em; /* 文字を大きく */
-    font-weight: bold;
-}
-
-#calculate-button:hover {
-    background-color: #218838;
-}
-
-#reset-button {
-    background-color: #dc3545;
-}
-
-#reset-button:hover {
-    background-color: #c82333;
-}
-
-#copy-export-button {
-    margin-top: 10px;
-    display: block;
-    width: 100%; /* 親要素に合わせる */
-}
-
-/* 血統表グリッド */
+/* 入力用血統表グリッド */
 .pedigree-grid-container {
     display: grid;
     grid-template-columns: repeat(31, 1fr);
     gap: 5px;
     max-width: 100%;
-    overflow-x: auto; /* 横スクロール可能に */
+    overflow-x: auto;
     padding: 10px;
     background: #e9efff;
     border: 1px solid #ccc;
@@ -137,7 +112,7 @@ button:hover {
     border: 1px solid #ccc;
     background-color: #fff;
     padding: 10px;
-    min-width: 200px; /* 最小幅 */
+    min-width: 200px;
     position: relative;
     font-size: 0.9em;
     border-radius: 4px;
@@ -160,177 +135,86 @@ select, .individual-select, .factor-select {
 }
 
 .stars-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-bottom: 10px;
+    display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px;
 }
-
 .stars-group label {
-    display: flex;
-    align-items: center;
-    font-size: 0.9em;
-    cursor: pointer;
+    display: flex; align-items: center; font-size: 0.9em; cursor: pointer;
 }
 
-/* 適性表示スタイル */
+/* 適性表示スタイル（入力フォーム・結果共通） */
 .aptitude-display {
-    margin-top: 10px;
-    display: none; /* 初期は非表示 */
-    font-size: 0.85em;
-    background-color: #fdfdfd;
-    padding: 5px;
-    border: 1px solid #eee;
-    border-radius: 3px;
+    margin-top: 10px; font-size: 0.85em;
 }
-
 .aptitude-group {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); /* 自動調整グリッド */
-    gap: 4px;
-    padding-bottom: 4px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 2px; padding-bottom: 2px;
 }
-
 .aptitude-item {
-    display: flex;
-    align-items: center;
+    display: flex; align-items: center; font-size: 0.9em;
 }
-
 .apt-label {
-    font-weight: bold;
-    margin-right: 2px;
+    font-weight: bold; margin-right: 4px;
 }
-
 .apt-value {
-    width: 18px;
-    height: 18px;
-    line-height: 18px;
-    display: inline-block;
-    text-align: center;
-    border-radius: 3px;
-    color: #fff; /* 背景色が濃いため文字色を白に */
-    font-weight: bold;
-    font-size: 0.9em;
+    width: 18px; height: 18px; line-height: 18px; display: inline-block;
+    text-align: center; border-radius: 3px; font-weight: bold;
+    font-size: 0.9em; border: 1px solid rgba(0,0,0,0.1);
 }
 
 /* ★★★★★ ランク表示の背景色（修正箇所） ★★★★★ */
-.rank-A { background-color: #FFA500; } /* オレンジ */
-.rank-B { background-color: #FF0000; } /* 赤 */
-.rank-C { background-color: #008000; } /* 緑 */
-.rank-D { background-color: #0000FF; } /* 青 */
-.rank-E { background-color: #800080; } /* 紫 */
-.rank-F { background-color: #000080; } /* 紺 */
-.rank-G { background-color: #808080; } /* グレー */
+.apt-value { color: #333; } /* 文字色を黒系に統一 */
+.rank-A { background-color: #ffddc9; } /* 薄いオレンジ */
+.rank-B { background-color: #ffcccc; } /* 薄い赤 */
+.rank-C { background-color: #ccffcc; } /* 薄い緑 */
+.rank-D { background-color: #cce6ff; } /* 薄い青 */
+.rank-E { background-color: #e6ccff; } /* 薄い紫 */
+.rank-F { background-color: #ccccff; } /* 薄い紺 */
+.rank-G { background-color: #e0e0e0; } /* 薄いグレー */
+/* 補正された適性の文字色 */
+.aptitude-value.changed { color: red; font-weight: bold; }
 
 /* コピーボタン */
 .copy-button {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background-color: #f0f0f0;
-    color: #333;
-    border: 1px solid #ccc;
-    padding: 3px 8px;
-    font-size: 0.8em;
-    cursor: pointer;
-    border-radius: 3px;
+    position: absolute; top: 5px; right: 5px; background-color: #f0f0f0;
+    color: #333; border: 1px solid #ccc; padding: 3px 8px; font-size: 0.8em;
+    cursor: pointer; border-radius: 3px;
 }
+.copy-button:hover { background-color: #e0e0e0; }
 
-.copy-button:hover {
-    background-color: #e0e0e0;
-}
-
-/* ★★★★★ 結果表示エリア（修正・追加箇所） ★★★★★ */
+/* ★★★★★ 結果表示エリア（修正箇所） ★★★★★ */
 .results-container {
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 15px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    max-width: 1200px; margin: 20px auto; padding: 15px;
+    background-color: #fff; border: 1px solid #ddd; border-radius: 8px;
 }
-
 /* 結果表示用の血統表グリッド */
-.results-grid-container {
+.results-pedigree-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 祖父母, 親, 本人の3列 */
-    grid-template-rows: repeat(4, auto);   /* 祖父母世代は4行 */
-    gap: 10px;
-    margin: 20px auto;
-    padding: 10px;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
     background-color: #f0f8ff;
+    padding: 10px;
     border: 1px solid #ccc;
     border-radius: 8px;
 }
-
-.results-grid-container .pedigree-cell {
-    border: 1px solid #ccc;
+.result-cell {
     background-color: #fff;
-    padding: 10px;
+    border: 1px solid #ccc;
     border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    padding: 8px;
+    font-size: 0.85em;
+    text-align: center;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    text-align: center;
-    gap: 5px;
+    gap: 4px;
 }
-
-.results-grid-container .pedigree-cell-title {
-    font-weight: bold;
-    color: #003366;
-    font-size: 1.1em;
-    margin-bottom: 5px;
-}
-
-.results-grid-container .aptitude-display {
-    border: none;
-    padding: 0;
-    background-color: transparent;
-    display: block; /* 常時表示 */
-    width: 100%;
-}
-
-.results-grid-container .aptitude-group {
-    display: grid;
-    grid-template-columns: repeat(2, auto); /* 2列で自動幅 */
-    gap: 3px 8px; /* 縦横の隙間 */
-    justify-content: center; /* 中央揃え */
-    padding-bottom: 3px;
-}
-
-.results-grid-container .aptitude-item {
-    font-size: 0.9em;
-}
-
-/* 補正された適性の色 */
-.aptitude-value.changed {
-    color: yellow; /* 変更された適性の文字色 */
-    font-weight: bold;
-    text-shadow: 1px 1px 2px black; /* 視認性向上のための影 */
-}
-
-/* 遺伝子付与可能性の表示スタイル */
+.individual-name { font-weight: bold; font-size: 1.1em; }
+.factor-info { color: #0056b3; font-weight: bold; }
 .gene-potential {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px dashed #ccc;
-    font-size: 0.9em;
-    line-height: 1.4;
-    width: 100%;
+    margin-top: 5px; padding-top: 5px; border-top: 1px dashed #ccc;
+    font-size: 0.9em; line-height: 1.3;
 }
-
-.gene-potential strong {
-    color: #d9534f; /* 確定した因子は強調 */
+.gene-potential strong { color: #d9534f; }
+.calculation-info {
+    margin: 20px auto; padding: 15px; background-color: #f9f9f9;
+    border: 1px solid #eee; border-radius: 8px; font-size: 0.9em;
 }
-
-.factor-explanation {
-    max-width: 1000px;
-    margin: 20px auto;
-    padding: 15px;
-    background-color: #f9f9f9;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    font-size: 0.9em;
-}
+.calculation-info ul { padding-left: 20px; margin: 0; }

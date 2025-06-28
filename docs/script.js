@@ -93,7 +93,7 @@ function createPedigreeGrid() {
         
         cell.style.gridRow = p.row + ' / span ' + span;
         
-        // 修正: 続柄表記を削除
+        // 修正箇所3: 続柄表記を削除
         let content = `<div class="pedigree-cell-title"></div>`;
         
         if (p.displayFactor) {
@@ -101,25 +101,31 @@ function createPedigreeGrid() {
                 <option value="">選択してください</option>
             </select>`;
             
+            content += `<select class="factor-select" data-position="${p.pos}">
+                <option value="">因子なし</option>`;
             factorTypes.forEach(type => {
-                content += `<div>
-                    <select class="factor-select" data-position="${p.pos}" data-factor="${type}">
-                        <option value="">因子なし</option>
-                        <option value="${type}">${type}</option>
-                    </select>
-                    <div class="stars-group" data-position="${p.pos}" data-factor="${type}">`;
-                for (let i = 1; i <= 3; i++) {
-                    content += `<label><input type="radio" name="stars_${p.pos}_${type}" value="${i}"> ☆${i}</label>`;
-                }
-                content += `</div></div>`;
+                content += `<option value="${type}">${type}</option>`;
             });
+            content += `</select>`;
+            
+            content += `<div class="stars-group" data-position="${p.pos}">`;
+            for (let i = 1; i <= 3; i++) {
+                content += `<label><input type="radio" name="stars_${p.pos}" value="${i}"> ☆${i}</label>`;
+            }
+            content += `</div>`;
+            
+            content += `<div class="aptitude-display" data-position="${p.pos}"></div>`;
         } else {
             content += `<select class="individual-select" data-position="${p.pos}">
                 <option value="">選択してください</option>
             </select>`;
+            content += `<div class="aptitude-display" data-position="${p.pos}"></div>`;
         }
         
-        content += `<button class="copy-button" data-position="${p.pos}">コピー</button>`;
+        if (p.pos === 22 || p.pos === 29) {
+            content += `<button class="copy-button" data-position="${p.pos}">コピー</button>`;
+        }
+        
         cell.innerHTML = content;
         container.appendChild(cell);
     });
@@ -134,44 +140,141 @@ function initializeDropdowns() {
             option.textContent = horse['名前'];
             select.appendChild(option);
         });
+        
+        select.addEventListener('change', function() {
+            updateAptitudeDisplay(this);
+        });
     });
+}
+
+function updateAptitudeDisplay(select) {
+    const position = select.getAttribute('data-position');
+    const selectedHorse = select.value;
+    const aptitudeDiv = document.querySelector(`[data-position="${position}"] .aptitude-display`);
+    
+    if (!aptitudeDiv) return;
+    
+    if (selectedHorse) {
+        const horseData_item = horseData.find(h => h['名前'] === selectedHorse);
+        if (horseData_item) {
+            const labels = {'芝': '芝', 'ダート': 'ダ', '短距離': '短', 'マイル': 'マ', '中距離': '中', '長距離': '長', '逃げ': '逃', '先行': '先', '差し': '差', '追込': '追'};
+            
+            let html = '<table class="aptitude-table"><tr>';
+            factorTypes.forEach(type => {
+                html += `<td class="apt-label">${labels[type]}</td>`;
+            });
+            html += '</tr><tr>';
+            factorTypes.forEach(type => {
+                const rank = horseData_item[type] || 'G';
+                html += `<td class="apt-value rank-${rank}">${rank}</td>`;
+            });
+            html += '</tr></table>';
+            
+            aptitudeDiv.innerHTML = html;
+        }
+    } else {
+        aptitudeDiv.innerHTML = '';
+    }
 }
 
 function setupCopyButtons() {
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('copy-button')) {
-            const position = e.target.getAttribute('data-position');
-            copyToClipboard(position);
+            const position = parseInt(e.target.getAttribute('data-position'));
+            copyPedigreeData(position);
         }
     });
 }
 
-function copyToClipboard(position) {
-    const cell = document.querySelector(`[data-position="${position}"]`);
-    const individualSelect = cell.querySelector('.individual-select');
-    const selectedHorse = individualSelect.value;
+function copyPedigreeData(sourcePosition) {
+    const sourceCell = document.querySelector(`[data-position="${sourcePosition}"]`);
+    const sourceSelect = sourceCell.querySelector('.individual-select');
+    const sourceHorse = sourceSelect.value;
     
-    if (!selectedHorse) {
-        alert('コピーするウマ娘を選択してください。');
+    if (!sourceHorse) {
+        alert('コピー元のウマ娘を選択してください。');
         return;
     }
     
-    let copyText = `${selectedHorse}\n`;
-    const factorSelects = cell.querySelectorAll('.factor-select');
-    factorSelects.forEach(select => {
-        const factor = select.getAttribute('data-factor');
-        const selectedFactor = select.value;
-        if (selectedFactor) {
-            const starsGroup = cell.querySelector(`[data-position="${position}"][data-factor="${factor}"]`);
-            const selectedStar = starsGroup.querySelector('input[type="radio"]:checked');
-            const stars = selectedStar ? selectedStar.value : '0';
-            copyText += `${factor}: ☆${stars}\n`;
+    const sourceFactor = sourceCell.querySelector('.factor-select');
+    const sourceFactorValue = sourceFactor ? sourceFactor.value : '';
+    const sourceStars = sourceCell.querySelector('input[type="radio"]:checked');
+    const sourceStarsValue = sourceStars ? sourceStars.value : '';
+    
+    let targetPositions = [];
+    if (sourcePosition === 22) { // 母方祖父
+        targetPositions = [7, 14]; // 父方祖父・祖母
+    } else if (sourcePosition === 29) { // 母方祖母
+        targetPositions = [7, 14]; // 父方祖父・祖母
+    }
+    
+    targetPositions.forEach(targetPos => {
+        const targetCell = document.querySelector(`[data-position="${targetPos}"]`);
+        if (targetCell) {
+            const targetSelect = targetCell.querySelector('.individual-select');
+            if (targetSelect) targetSelect.value = sourceHorse;
+            
+            const targetFactor = targetCell.querySelector('.factor-select');
+            if (targetFactor && sourceFactorValue) targetFactor.value = sourceFactorValue;
+            
+            if (sourceStarsValue) {
+                const targetStars = targetCell.querySelector(`input[value="${sourceStarsValue}"]`);
+                if (targetStars) targetStars.checked = true;
+            }
+            
+            updateAptitudeDisplay(targetSelect);
+            
+            // 3代目、4代目、5代目もコピー
+            copyDescendants(sourcePosition, targetPos);
         }
     });
     
-    navigator.clipboard.writeText(copyText).then(() => {
-        alert('クリップボードにコピーしました。');
-    });
+    saveStateToLocalStorage();
+    alert('データをコピーしました。');
+}
+
+function copyDescendants(sourcePos, targetPos) {
+    const positionMappings = {
+        22: { // 母方祖父
+            18: 3, 21: 6, // 4代目
+            16: 1, 17: 2, 19: 4, 20: 5 // 5代目
+        },
+        29: { // 母方祖母
+            25: 10, 28: 13, // 4代目
+            23: 8, 24: 9, 26: 11, 27: 12 // 5代目
+        }
+    };
+    
+    if (positionMappings[sourcePos]) {
+        Object.keys(positionMappings[sourcePos]).forEach(srcPos => {
+            const src = parseInt(srcPos);
+            const tgt = positionMappings[sourcePos][srcPos];
+            
+            const sourceCell = document.querySelector(`[data-position="${src}"]`);
+            const targetCell = document.querySelector(`[data-position="${tgt}"]`);
+            
+            if (sourceCell && targetCell) {
+                const sourceSelect = sourceCell.querySelector('.individual-select');
+                const targetSelect = targetCell.querySelector('.individual-select');
+                if (sourceSelect && targetSelect) {
+                    targetSelect.value = sourceSelect.value;
+                    updateAptitudeDisplay(targetSelect);
+                }
+                
+                const sourceFactor = sourceCell.querySelector('.factor-select');
+                const targetFactor = targetCell.querySelector('.factor-select');
+                if (sourceFactor && targetFactor) {
+                    targetFactor.value = sourceFactor.value;
+                }
+                
+                const sourceStars = sourceCell.querySelector('input[type="radio"]:checked');
+                if (sourceStars) {
+                    const targetStars = targetCell.querySelector(`input[value="${sourceStars.value}"]`);
+                    if (targetStars) targetStars.checked = true;
+                }
+            }
+        });
+    }
 }
 
 function setupControlButtons() {
@@ -187,7 +290,6 @@ function setupControlButtons() {
     if (exportBtn) exportBtn.addEventListener('click', exportData);
     if (copyExportBtn) copyExportBtn.addEventListener('click', copyExportData);
     
-    // 修正: 全ての入力要素の変更を監視（4代目・5代目も含む）
     document.addEventListener('change', function(e) {
         if (e.target.classList.contains('individual-select') || 
             e.target.classList.contains('factor-select') || 
@@ -198,7 +300,7 @@ function setupControlButtons() {
 }
 
 function calculateResults() {
-    const targetPosition = 31; // 本人の位置
+    const targetPosition = 31;
     const targetCell = document.querySelector(`[data-position="${targetPosition}"]`);
     const targetSelect = targetCell.querySelector('.individual-select');
     const targetHorse = targetSelect.value;
@@ -214,7 +316,7 @@ function calculateResults() {
         return;
     }
     
-    // 修正: 全世代の因子を集計（4代目・5代目も含む）
+    // 修正箇所2: 全世代（4代目・5代目も含む）の因子を集計
     const factorCounts = {};
     factorTypes.forEach(type => factorCounts[type] = 0);
     
@@ -222,18 +324,18 @@ function calculateResults() {
         if (p.displayFactor) {
             const cell = document.querySelector(`[data-position="${p.pos}"]`);
             if (cell) {
-                factorTypes.forEach(type => {
-                    const factorSelect = cell.querySelector(`[data-factor="${type}"]`);
-                    if (factorSelect && factorSelect.value === type) {
-                        const starsGroup = cell.querySelector(`[data-position="${p.pos}"][data-factor="${type}"]`);
-                        if (starsGroup) {
-                            const selectedStar = starsGroup.querySelector('input[type="radio"]:checked');
-                            if (selectedStar) {
-                                factorCounts[type] += parseInt(selectedStar.value);
-                            }
-                        }
+                const factorSelect = cell.querySelector('.factor-select');
+                const starsGroup = cell.querySelector('.stars-group');
+                
+                if (factorSelect && starsGroup) {
+                    const selectedFactor = factorSelect.value;
+                    const selectedStar = starsGroup.querySelector('input[type="radio"]:checked');
+                    
+                    if (selectedFactor && selectedStar) {
+                        const stars = parseInt(selectedStar.value);
+                        factorCounts[selectedFactor] += stars;
                     }
-                });
+                }
             }
         }
     });
@@ -257,8 +359,7 @@ function calculateResults() {
             base: baseRank,
             final: newRank,
             stars: stars,
-            // 修正: ランクが変化したかどうかのフラグを追加
-            changed: newIndex > baseIndex
+            changed: newIndex > baseIndex // 修正箇所1: 変化フラグを追加
         };
     });
     
@@ -326,7 +427,7 @@ function displayResults(results, targetHorse) {
                         rank = horseData_item[type] || 'G';
                     }
                     
-                    // 修正: 変化した適性は赤文字で表示
+                    // 修正箇所1: 変化した適性は赤文字で表示
                     const cellClass = `apt-value rank-${rank}${isChanged ? ' changed' : ''}`;
                     html += `<td class="${cellClass}">${rank}</td>`;
                 });
@@ -335,6 +436,23 @@ function displayResults(results, targetHorse) {
                 aptitudeTable.innerHTML = html;
                 cell.appendChild(aptitudeTable);
             }
+            
+            if (pos !== 31) {
+                const factorSelect = inputCell ? inputCell.querySelector('.factor-select') : null;
+                const starsGroup = inputCell ? inputCell.querySelector('.stars-group') : null;
+                
+                if (factorSelect && starsGroup) {
+                    const selectedFactor = factorSelect.value;
+                    const selectedStar = starsGroup.querySelector('input[type="radio"]:checked');
+                    
+                    if (selectedFactor && selectedStar) {
+                        const factorInfo = document.createElement('div');
+                        factorInfo.className = 'factor-info';
+                        factorInfo.textContent = `${selectedFactor} ☆${selectedStar.value}`;
+                        cell.appendChild(factorInfo);
+                    }
+                }
+            }
         }
         
         pedigreeContainer.appendChild(cell);
@@ -342,7 +460,6 @@ function displayResults(results, targetHorse) {
     
     container.appendChild(pedigreeContainer);
     
-    // 計算情報の表示
     const infoDiv = document.createElement('div');
     infoDiv.className = 'calculation-info';
     infoDiv.innerHTML = `
@@ -361,8 +478,10 @@ function displayResults(results, targetHorse) {
 
 function resetAllInputs() {
     if (confirm('全ての入力内容をリセットしますか？')) {
-        // 修正: 全ての入力要素をリセット（4代目・5代目も含む）
-        document.querySelectorAll('.individual-select').forEach(select => select.value = '');
+        document.querySelectorAll('.individual-select').forEach(select => {
+            select.value = '';
+            updateAptitudeDisplay(select);
+        });
         document.querySelectorAll('.factor-select').forEach(select => select.value = '');
         document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
         
@@ -374,7 +493,7 @@ function resetAllInputs() {
 function saveStateToLocalStorage() {
     const state = {};
     
-    // 修正: 全世代の入力状態を保存
+    // 修正箇所2: 全世代の入力状態を保存
     inputPedigreePositions.forEach(p => {
         const cell = document.querySelector(`[data-position="${p.pos}"]`);
         if (cell) {
@@ -384,20 +503,18 @@ function saveStateToLocalStorage() {
             }
             
             if (p.displayFactor) {
-                factorTypes.forEach(type => {
-                    const factorSelect = cell.querySelector(`[data-factor="${type}"]`);
-                    if (factorSelect) {
-                        state[`factor_${p.pos}_${type}`] = factorSelect.value;
+                const factorSelect = cell.querySelector('.factor-select');
+                if (factorSelect) {
+                    state[`factor_${p.pos}`] = factorSelect.value;
+                }
+                
+                const starsGroup = cell.querySelector('.stars-group');
+                if (starsGroup) {
+                    const selectedStar = starsGroup.querySelector('input[type="radio"]:checked');
+                    if (selectedStar) {
+                        state[`stars_${p.pos}`] = selectedStar.value;
                     }
-                    
-                    const starsGroup = cell.querySelector(`[data-position="${p.pos}"][data-factor="${type}"]`);
-                    if (starsGroup) {
-                        const selectedStar = starsGroup.querySelector('input[type="radio"]:checked');
-                        if (selectedStar) {
-                            state[`stars_${p.pos}_${type}`] = selectedStar.value;
-                        }
-                    }
-                });
+                }
             }
         }
     });
@@ -412,33 +529,32 @@ function loadStateFromLocalStorage() {
     try {
         const state = JSON.parse(savedState);
         
-        // 修正: 全世代の入力状態を復元
+        // 修正箇所2: 全世代の入力状態を復元
         inputPedigreePositions.forEach(p => {
             const cell = document.querySelector(`[data-position="${p.pos}"]`);
             if (cell) {
                 const individualSelect = cell.querySelector('.individual-select');
                 if (individualSelect && state[`individual_${p.pos}`]) {
                     individualSelect.value = state[`individual_${p.pos}`];
+                    updateAptitudeDisplay(individualSelect);
                 }
                 
                 if (p.displayFactor) {
-                    factorTypes.forEach(type => {
-                        const factorSelect = cell.querySelector(`[data-factor="${type}"]`);
-                        if (factorSelect && state[`factor_${p.pos}_${type}`]) {
-                            factorSelect.value = state[`factor_${p.pos}_${type}`];
-                        }
-                        
-                        const starsValue = state[`stars_${p.pos}_${type}`];
-                        if (starsValue) {
-                            const starsGroup = cell.querySelector(`[data-position="${p.pos}"][data-factor="${type}"]`);
-                            if (starsGroup) {
-                                const radioButton = starsGroup.querySelector(`input[value="${starsValue}"]`);
-                                if (radioButton) {
-                                    radioButton.checked = true;
-                                }
+                    const factorSelect = cell.querySelector('.factor-select');
+                    if (factorSelect && state[`factor_${p.pos}`]) {
+                        factorSelect.value = state[`factor_${p.pos}`];
+                    }
+                    
+                    const starsValue = state[`stars_${p.pos}`];
+                    if (starsValue) {
+                        const starsGroup = cell.querySelector('.stars-group');
+                        if (starsGroup) {
+                            const radioButton = starsGroup.querySelector(`input[value="${starsValue}"]`);
+                            if (radioButton) {
+                                radioButton.checked = true;
                             }
                         }
-                    });
+                    }
                 }
             }
         });
@@ -459,20 +575,18 @@ function exportData() {
             }
             
             if (p.displayFactor) {
-                factorTypes.forEach(type => {
-                    const factorSelect = cell.querySelector(`[data-factor="${type}"]`);
-                    if (factorSelect && factorSelect.value) {
-                        state[`factor_${p.pos}_${type}`] = factorSelect.value;
+                const factorSelect = cell.querySelector('.factor-select');
+                if (factorSelect && factorSelect.value) {
+                    state[`factor_${p.pos}`] = factorSelect.value;
+                }
+                
+                const starsGroup = cell.querySelector('.stars-group');
+                if (starsGroup) {
+                    const selectedStar = starsGroup.querySelector('input[type="radio"]:checked');
+                    if (selectedStar) {
+                        state[`stars_${p.pos}`] = selectedStar.value;
                     }
-                    
-                    const starsGroup = cell.querySelector(`[data-position="${p.pos}"][data-factor="${type}"]`);
-                    if (starsGroup) {
-                        const selectedStar = starsGroup.querySelector('input[type="radio"]:checked');
-                        if (selectedStar) {
-                            state[`stars_${p.pos}_${type}`] = selectedStar.value;
-                        }
-                    }
-                });
+                }
             }
         }
     });
@@ -492,38 +606,38 @@ function importData() {
     try {
         const state = JSON.parse(importText);
         
-        // 現在の入力をクリア
-        document.querySelectorAll('.individual-select').forEach(select => select.value = '');
+        document.querySelectorAll('.individual-select').forEach(select => {
+            select.value = '';
+            updateAptitudeDisplay(select);
+        });
         document.querySelectorAll('.factor-select').forEach(select => select.value = '');
         document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
         
-        // インポートしたデータを適用
         inputPedigreePositions.forEach(p => {
             const cell = document.querySelector(`[data-position="${p.pos}"]`);
             if (cell) {
                 const individualSelect = cell.querySelector('.individual-select');
                 if (individualSelect && state[`individual_${p.pos}`]) {
                     individualSelect.value = state[`individual_${p.pos}`];
+                    updateAptitudeDisplay(individualSelect);
                 }
                 
                 if (p.displayFactor) {
-                    factorTypes.forEach(type => {
-                        const factorSelect = cell.querySelector(`[data-factor="${type}"]`);
-                        if (factorSelect && state[`factor_${p.pos}_${type}`]) {
-                            factorSelect.value = state[`factor_${p.pos}_${type}`];
-                        }
-                        
-                        const starsValue = state[`stars_${p.pos}_${type}`];
-                        if (starsValue) {
-                            const starsGroup = cell.querySelector(`[data-position="${p.pos}"][data-factor="${type}"]`);
-                            if (starsGroup) {
-                                const radioButton = starsGroup.querySelector(`input[value="${starsValue}"]`);
-                                if (radioButton) {
-                                    radioButton.checked = true;
-                                }
+                    const factorSelect = cell.querySelector('.factor-select');
+                    if (factorSelect && state[`factor_${p.pos}`]) {
+                        factorSelect.value = state[`factor_${p.pos}`];
+                    }
+                    
+                    const starsValue = state[`stars_${p.pos}`];
+                    if (starsValue) {
+                        const starsGroup = cell.querySelector('.stars-group');
+                        if (starsGroup) {
+                            const radioButton = starsGroup.querySelector(`input[value="${starsValue}"]`);
+                            if (radioButton) {
+                                radioButton.checked = true;
                             }
                         }
-                    });
+                    }
                 }
             }
         });

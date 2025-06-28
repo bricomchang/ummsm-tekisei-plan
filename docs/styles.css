@@ -107,11 +107,11 @@ select, .individual-select, .factor-select {
 .result-cell .factor-info { color: #0056b3; font-weight: bold; font-size: 1.2em;text-align: center; }
 
 /* 遺伝子付与可能性 */
-.gene-potentials { margin-top: 5px; padding-top: 5px; border-top: 1px dashed #ccc; font-size: 1.2em; text-align: center; }
+.gene-potentials { margin-top: 5px; padding-top: 5px; border-top: 1px dashed #ccc; font-size: 1.3em; text-align: center; }
 .gene-confirmed { color: #d9534f; font-weight: bold; }
 .gene-potential { color: #5cb85c; }
 
 /* 高さ統一のためのプレースホルダー */
 .factor-info-placeholder { height: 21px; }
-.aptitude-table-placeholder { height: 10px; }
-.gene-potentials-placeholder { height: 10px; }
+.aptitude-table-placeholder { height: 0px; }
+.gene-potentials-placeholder { height: 0px; }

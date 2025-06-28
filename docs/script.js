@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const factorTypes = ['芝', 'ダート', '短距離', 'マイル', '中距離', '長距離', '逃げ', '先行', '差し', '追込'];
     const aptitudeRanks = ['G', 'F', 'E', 'D', 'C', 'B', 'A'];
     const APTITUDE_TABLE_LAYOUT = [
-        { labels: ['芝', 'ダート'], keys: ['芝', 'ダート'] },
+        { labels: ['芝', 'ダ'], keys: ['芝', 'ダート'] },
         { labels: ['短', 'マ', '中', '長'], keys: ['短距離', 'マイル', '中距離', '長距離'] },
         { labels: ['逃', '先', '差', '追'], keys: ['逃げ', '先行', '差し', '追込'] }
     ];
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             cell.style.gridRow = `${p.row} / span ${span}`;
             // ★★★★★ 修正箇所 ★★★★★
             // 世代(gen)に基づいて正しい列(column)を設定
-            cell.style.gridColumn = 6 - p.gen;
+            cell.style.gridColumn = p.gen;
             
             let content = `<div class="pedigree-cell-title"></div>`;
             content += `<select class="individual-select" data-position="${p.pos}"><option value="">選択してください</option></select>`;
@@ -260,7 +260,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             cell.style.gridRow = `${p.row} / span ${span}`;
             // ★★★★★ 修正箇所 ★★★★★
             // 世代(gen)に基づいて正しい列(column)を設定
-            cell.style.gridColumn = 6 - p.gen;
+            cell.style.gridColumn = p.gen;
             
             const horseName = formData['horse_' + p.pos];
             let nameHTML = `<div class="individual-name">${horseName || (p.pos === 31 ? '未指定' : '')}</div>`;

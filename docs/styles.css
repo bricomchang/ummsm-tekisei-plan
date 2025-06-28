@@ -3,7 +3,7 @@ body {
     font-family: 'Meiryo', sans-serif;
     background-color: #f5f5f5;
     margin: 0;
-    padding: 20px;
+    padding: 10px;
     color: #333;
 }
 
@@ -61,7 +61,7 @@ button:hover { background-color: #0056b3; }
 .pedigree-cell, .result-cell {
     border: 1px solid #ccc;
     background-color: #fff;
-    padding: 10px;
+    padding: 0px;
     font-size: 0.95em;
     border-radius: 4px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -69,7 +69,7 @@ button:hover { background-color: #0056b3; }
     flex-direction: column;
     gap: 4px;
     /* セルの最小幅を指定して、狭い画面でも内容が潰れないようにする */
-    min-width: 220px;
+    min-width: 110px;
 }
 
 .result-cell { padding: 5px; }
@@ -103,15 +103,15 @@ select, .individual-select, .factor-select {
 
 /* 結果表示エリアの個別スタイル */
 .results-container { margin: 20px 0; }
-.result-cell .individual-name { font-weight: bold; font-size: 1.1em; text-align: center; }
-.result-cell .factor-info { color: #0056b3; font-weight: bold; text-align: center; }
+.result-cell .individual-name { font-weight: bold; font-size: 1.5em; text-align: center; }
+.result-cell .factor-info { color: #0056b3; font-weight: bold; font-size: 1.2em;text-align: center; }
 
 /* 遺伝子付与可能性 */
-.gene-potentials { margin-top: 5px; padding-top: 5px; border-top: 1px dashed #ccc; font-size: 0.9em; text-align: center; }
+.gene-potentials { margin-top: 5px; padding-top: 5px; border-top: 1px dashed #ccc; font-size: 1.2em; text-align: center; }
 .gene-confirmed { color: #d9534f; font-weight: bold; }
 .gene-potential { color: #5cb85c; }
 
 /* 高さ統一のためのプレースホルダー */
 .factor-info-placeholder { height: 21px; }
-.aptitude-table-placeholder { height: 154px; }
-.gene-potentials-placeholder { height: 40px; }
+.aptitude-table-placeholder { height: 10px; }
+.gene-potentials-placeholder { height: 10px; }

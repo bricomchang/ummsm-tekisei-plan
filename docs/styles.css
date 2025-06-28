@@ -1,61 +1,191 @@
-/* 既存のスタイルはそのまま保持し、以下を追加/修正 */
+/* 全体レイアウト */
+body {
+    font-family: 'Meiryo', sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+    max-width: 1500px;
+    margin: 0 auto;
+}
+
+h1, h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.top-controls-container {
+    max-width: 100%;
+    padding: 0 10px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* ボタン */
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+button:hover { background-color: #0056b3; }
+#calculate { background-color: #28a745; }
+#calculate:hover { background-color: #218838; }
+#reset { background-color: #dc3545; }
+#reset:hover { background-color: #c82333; }
+
+/* 入力用血統表グリッド */
+.pedigree-grid-container {
+    display: grid;
+    grid-template-columns: repeat(31, 1fr);
+    gap: 5px;
+    max-width: 100%;
+    overflow-x: auto;
+    padding: 10px;
+    background: #e9efff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.pedigree-cell {
+    border: 1px solid #ccc;
+    background-color: #fff;
+    padding: 10px;
+    min-width: 220px;
+    font-size: 0.95em;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.pedigree-cell-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #003366;
+    font-size: 1em;
+}
+
+select, .individual-select, .factor-select {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.stars-group {
+    display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px;
+}
+
+.stars-group label {
+    display: flex; align-items: center; font-size: 0.9em; cursor: pointer;
+}
+
+/* ★★★★★ 適性表示テーブルのスタイル (修正箇所) ★★★★★ */
+.aptitude-display {
+    margin-top: 8px;
+    border-top: 1px dashed #ccc;
+    padding-top: 5px;
+    width: 100%;
+}
 
 .aptitude-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 5px;
-    font-size: 0.9em;
+    font-size: 1em;
+    table-layout: fixed; /* テーブルのレイアウトを固定 */
 }
 
 .aptitude-table td {
-    border: 1px solid #ccc;
-    padding: 2px;
+    border: 1px solid #ddd;
     text-align: center;
-    vertical-align: middle;
+    padding: 3px;
+    height: 24px; /* セルの高さを固定 */
 }
 
 .aptitude-table .apt-label {
     background-color: #f2f2f2;
-    font-weight: normal;
+    font-weight: bold;
 }
 
+/* 適性ランクのセルに背景色を適用 */
 .aptitude-table .apt-value {
     font-weight: bold;
-    color: #333;
 }
+.aptitude-table .apt-value.rank-A { background-color: #ffddc9; }
+.aptitude-table .apt-value.rank-B { background-color: #ffcccc; }
+.aptitude-table .apt-value.rank-C { background-color: #ccffcc; }
+.aptitude-table .apt-value.rank-D { background-color: #cce6ff; }
+.aptitude-table .apt-value.rank-E { background-color: #e6ccff; }
+.aptitude-table .apt-value.rank-F { background-color: #ccccff; }
+.aptitude-table .apt-value.rank-G { background-color: #e0e0e0; }
 
-/* ランクごとの背景色 */
-.rank-A { background-color: #ffddc9; }
-.rank-B { background-color: #ffcccc; }
-.rank-C { background-color: #ccffcc; }
-.rank-D { background-color: #cce6ff; }
-.rank-E { background-color: #e6ccff; }
-.rank-F { background-color: #ccccff; }
-.rank-G { background-color: #e0e0e0; }
-
-.apt-value.changed {
+.aptitude-table .apt-value.changed {
     color: red !important;
 }
 
-/* 遺伝子付与可能性のスタイル */
-.gene-potentials {
-    margin-top: 8px;
-    border-top: 1px solid #eee;
-    padding-top: 5px;
+.aptitude-table td.empty {
+    background-color: #fff;
+    border-color: transparent;
+}
+
+
+/* 結果表示エリア */
+.results-container {
+    max-width: 100%;
+    margin: 20px auto; padding: 15px;
+    background-color: #fff; border: 1px solid #ddd; border-radius: 8px;
+}
+
+.results-pedigree-container {
+    display: grid;
+    grid-template-columns: repeat(31, 1fr);
+    gap: 5px;
+    max-width: 100%;
+    overflow-x: auto;
+    padding: 10px;
+    background: #f0f8ff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.result-cell {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px;
     font-size: 0.9em;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
-.gene-confirmed {
-    color: #28a745; /* 緑色 */
-    font-weight: bold;
-}
+.result-cell .individual-name { font-weight: bold; font-size: 1.1em; text-align: center;}
+.result-cell .factor-info { color: #0056b3; font-weight: bold; text-align: center; }
 
-.gene-potential {
-    color: #007bff; /* 青色 */
-}
-
-/* その他の微調整 */
-.factor-info {
+/* ★★★★★ 遺伝子付与可能性のスタイル (追加) ★★★★★ */
+.gene-potentials {
     margin-top: 5px;
+    padding-top: 5px;
+    border-top: 1px dashed #ccc;
+    font-size: 0.9em;
+    text-align: center;
+}
+.gene-potentials div:first-child {
     font-weight: bold;
+    margin-bottom: 3px;
+}
+.gene-confirmed {
+    color: #d9534f; /* 赤系 */
+    font-weight: bold;
+}
+.gene-potential {
+    color: #5cb85c; /* 緑系 */
 }

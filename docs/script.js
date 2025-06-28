@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', async function() {
-    // 定数定義
+    // --- 定数定義 ---
     const inputPedigreePositions = [
         {gen: 1, pos: 31, label: '本人', row: 1, displayFactor: false},
         {gen: 2, pos: 15, label: '父', row: 1, displayFactor: true}, {gen: 2, pos: 30, label: '母', row: 9, displayFactor: true},
@@ -9,16 +9,65 @@ document.addEventListener('DOMContentLoaded', async function() {
     ];
     const factorTypes = ['芝', 'ダート', '短距離', 'マイル', '中距離', '長距離', '逃げ', '先行', '差し', '追込'];
     const aptitudeRanks = ['G', 'F', 'E', 'D', 'C', 'B', 'A'];
-    // 適性表のレイアウト定義
-    const APTITUDE_LAYOUT = [
-        { title: 'バ場適性', types: [{ key: '芝' }, { key: 'ダート' }] },
-        { title: '距離適性', types: [{ key: '短距離' }, { key: 'マイル' }, { key: '中距離' }, { key: '長距離' }] },
-        { title: '脚質適性', types: [{ key: '逃げ' }, { key: '先行' }, { key: '差し' }, { key: '追込' }] }
+    const APTITUDE_LAYOUT_GRID = [
+        [{ key: '芝', label: '芝' }, { key: 'ダート', label: 'ダ' }],
+        [{ key: '短距離', label: '短' }, { key: 'マイル', label: 'マ' }],
+        [{ key: '中距離', label: '中' }, { key: '長距離', label: '長' }],
+        [{ key: '逃げ', label: '逃' }, { key: '先行', label: '先' }],
+        [{ key: '差し', label: '差' }, { key: '追込', label: '追' }]
     ];
     let horseData = [];
     const LOCAL_STORAGE_KEY = 'umamusumePedigreeData';
 
-    // CSVデータ読み込み
+    // --- 遺伝子付与可能性のロジック (ご提示のものを統合) ---
+    function getAncestorsForGenePotential(pos) {
+        const mappings = {
+            31: [15, 30, 7, 14, 22, 29], 15: [7, 14, 3, 6, 10, 13], 30: [22, 29, 18, 21, 25, 28],
+            7: [3, 6, 1, 2, 4, 5], 14: [10, 13, 8, 9, 11, 12], 22: [18, 21, 16, 17, 19, 20], 29: [25, 28, 23, 24, 26, 27]
+        };
+        return mappings[pos] || [];
+    }
+
+    function calculateGenePotential(pos, formData) {
+        const ancestors = getAncestorsForGenePotential(pos);
+        const factorCounts = {};
+        factorTypes.forEach(type => { factorCounts[type] = 0; });
+
+        ancestors.forEach(ancestorPos => {
+            const factor = formData[`factor_${ancestorPos}`];
+            const stars = parseInt(formData[`star_${ancestorPos}`] || '0');
+            if (factor && stars > 0) {
+                factorCounts[factor] += stars;
+            }
+        });
+        const genePotentials = [];
+        factorTypes.forEach(type => {
+            const stars = factorCounts[type];
+            if (stars >= 12) {
+                genePotentials.push({type: type, status: 'confirmed', stars: stars});
+            } else if (stars >= 6) {
+                genePotentials.push({type: type, status: 'potential', stars: stars});
+            }
+        });
+        genePotentials.sort((a, b) => b.stars - a.stars);
+        return genePotentials.slice(0, 3);
+    }
+
+    function generateGenePotentialHTML(genePotentials) {
+        if (genePotentials.length === 0) return '';
+        let html = '<div class="gene-potentials">';    
+        genePotentials.forEach(gene => {
+            if (gene.status === 'confirmed') {
+                html += `<div class="gene-confirmed">${gene.type}遺伝子確定</div>`;
+            } else {
+                html += `<div class="gene-potential">${gene.type}遺伝子獲得</div>`;
+            }
+        });
+        html += '</div>';
+        return html;
+    }
+
+    // --- 主要な関数 ---
     async function loadCSV() {
         const response = await fetch('umadata.csv');
         if (!response.ok) throw new Error('CSVの読み込みに失敗しました。');
@@ -40,24 +89,19 @@ document.addEventListener('DOMContentLoaded', async function() {
         return data;
     }
 
-    // 血統表のHTMLを生成
     function createPedigreeGrid() {
         const container = document.getElementById('pedigreeGrid');
         if (!container) return;
         container.innerHTML = '';
-
         inputPedigreePositions.forEach(p => {
             const cell = document.createElement('div');
             cell.className = `pedigree-cell gen${p.gen}`;
             cell.setAttribute('data-position', p.pos);
-
             let span = 1;
             if (p.gen === 1) span = 16; else if (p.gen === 2) span = 8; else if (p.gen === 3) span = 4; else if (p.gen === 4) span = 2;
             cell.style.gridRow = `${p.row} / span ${span}`;
-            
             let content = `<div class="pedigree-cell-title"></div>`;
             content += `<select class="individual-select" data-position="${p.pos}"><option value="">選択してください</option></select>`;
-
             if (p.displayFactor) {
                 content += `<select class="factor-select" data-position="${p.pos}"><option value="">因子なし</option>`;
                 factorTypes.forEach(type => { content += `<option value="${type}">${type}</option>`; });
@@ -68,7 +112,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 }
                 content += `</div>`;
             }
-
             if (p.gen <= 3) {
                 content += `<div class="aptitude-display" data-position="${p.pos}"></div>`;
             }
@@ -88,27 +131,26 @@ document.addEventListener('DOMContentLoaded', async function() {
             });
         });
     }
-    
-    // 指定された3段組レイアウトで適性表のHTMLを生成
+
     function createAptitudeTableHTML(horseName, calculatedRanks = {}) {
         const horse = horseData.find(h => h['名前'] === horseName);
         if (!horse) return '';
-        
         let html = '<table class="aptitude-table">';
-        APTITUDE_LAYOUT.forEach(group => {
-            html += `<tr><td class="apt-label">${group.title}</td><td>`;
-            group.types.forEach(apt => {
+        APTITUDE_LAYOUT_GRID.forEach(row => {
+            html += '<tr>';
+            row.forEach(apt => html += `<td class="apt-label">${apt.label}</td>`);
+            html += '</tr><tr>';
+            row.forEach(apt => {
                 const finalRank = calculatedRanks[apt.key]?.final || horse[apt.key] || 'G';
                 const changedClass = calculatedRanks[apt.key]?.changed ? ' changed' : '';
-                html += `<span class="apt-value rank-${finalRank}${changedClass}">${finalRank}</span>`;
+                html += `<td class="apt-value rank-${finalRank}${changedClass}">${finalRank}</td>`;
             });
-            html += '</td></tr>';
+            html += '</tr>';
         });
         html += '</table>';
         return html;
     }
-    
-    // 入力欄の適性表示を更新
+
     function updateAptitudeDisplay(position) {
         const select = document.querySelector(`.individual-select[data-position="${position}"]`);
         const aptitudeDiv = document.querySelector(`.aptitude-display[data-position="${position}"]`);
@@ -117,20 +159,24 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
-    function saveState() {
-        const state = {};
+    function getCurrentFormData() {
+        const formData = {};
         inputPedigreePositions.forEach(p => {
             const pos = p.pos;
             const select = document.querySelector(`.individual-select[data-position="${pos}"]`);
-            if (select) state[`horse_${pos}`] = select.value;
+            if (select) formData[`horse_${pos}`] = select.value;
             if (p.displayFactor) {
                 const factor = document.querySelector(`.factor-select[data-position="${pos}"]`);
-                if (factor) state[`factor_${pos}`] = factor.value;
+                if (factor) formData[`factor_${pos}`] = factor.value;
                 const star = document.querySelector(`input[name="stars_${pos}"]:checked`);
-                if (star) state[`star_${pos}`] = star.value;
+                if (star) formData[`star_${pos}`] = star.value;
             }
         });
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+        return formData;
+    }
+
+    function saveState() {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(getCurrentFormData()));
     }
 
     function loadState() {
@@ -161,23 +207,23 @@ document.addEventListener('DOMContentLoaded', async function() {
         resultsGrid.className = 'results-pedigree-container';
         resultsContainer.appendChild(resultsGrid);
         
-        // 因子合計を計算
+        const currentFormData = getCurrentFormData();
+        
         const factorCounts = {};
         factorTypes.forEach(type => factorCounts[type] = 0);
         inputPedigreePositions.forEach(p => {
             if (p.displayFactor) {
-                const factor = document.querySelector(`.factor-select[data-position="${p.pos}"]`)?.value;
-                const star = document.querySelector(`input[name="stars_${p.pos}"]:checked`)?.value;
+                const factor = currentFormData[`factor_${p.pos}`];
+                const star = currentFormData[`star_${p.pos}`];
                 if (factor && star) {
                     factorCounts[factor] += parseInt(star, 10);
                 }
             }
         });
         
-        const mainHorseName = document.querySelector('.individual-select[data-position="31"]')?.value;
+        const mainHorseName = currentFormData['horse_31'];
         const mainHorseData = horseData.find(h => h['名前'] === mainHorseName);
 
-        // 本人のみ適性計算
         const calculatedRanksForMain = {};
         if (mainHorseData) {
             factorTypes.forEach(type => {
@@ -188,7 +234,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 else if (stars >= 7) increase = 3;
                 else if (stars >= 4) increase = 2;
                 else if (stars >= 1) increase = 1;
-                
                 const newRankIndex = Math.min(baseRankIndex + increase, aptitudeRanks.length - 1);
                 calculatedRanksForMain[type] = {
                     final: aptitudeRanks[newRankIndex],
@@ -197,7 +242,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             });
         }
         
-        // 5世代分の結果表示
         inputPedigreePositions.forEach(p => {
             const cell = document.createElement('div');
             cell.className = `result-cell gen${p.gen}`;
@@ -205,23 +249,23 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (p.gen === 1) span = 16; else if (p.gen === 2) span = 8; else if (p.gen === 3) span = 4; else if (p.gen === 4) span = 2;
             cell.style.gridRow = `${p.row} / span ${span}`;
             
-            const horseName = document.querySelector(`.individual-select[data-position="${p.pos}"]`)?.value;
-            let nameHTML = `<div class="individual-name">${horseName || (p.pos === 31 ? '未指定' : '')}</div>`;
-            let tableHTML = '';
+            const horseName = currentFormData[`horse_${p.pos}`];
+            const nameHTML = `<div class="individual-name">${horseName || (p.pos === 31 ? '未指定' : '')}</div>`;
             
+            const factor = currentFormData[`factor_${p.pos}`];
+            const star = currentFormData[`star_${p.pos}`];
+            const factorHTML = (p.displayFactor && factor && star) ? `<div class="factor-info">${factor} ☆${star}</div>` : '';
+            
+            let tableHTML = '';
+            let genePotentialHTML = '';
+
             if (p.gen <= 3) {
-                if (p.pos === 31) {
-                    tableHTML = createAptitudeTableHTML(horseName, calculatedRanksForMain);
-                } else {
-                    tableHTML = createAptitudeTableHTML(horseName);
-                }
+                tableHTML = (p.pos === 31) ? createAptitudeTableHTML(horseName, calculatedRanksForMain) : createAptitudeTableHTML(horseName);
+                const genePotentials = calculateGenePotential(p.pos, currentFormData);
+                genePotentialHTML = generateGenePotentialHTML(genePotentials);
             }
 
-            const factor = document.querySelector(`.factor-select[data-position="${p.pos}"]`)?.value;
-            const star = document.querySelector(`input[name="stars_${p.pos}"]:checked`)?.value;
-            let factorHTML = (p.displayFactor && factor && star) ? `<div class="factor-info">${factor} ☆${star}</div>` : '';
-
-            cell.innerHTML = nameHTML + tableHTML + factorHTML;
+            cell.innerHTML = nameHTML + factorHTML + tableHTML + genePotentialHTML;
             resultsGrid.appendChild(cell);
         });
     }
@@ -239,8 +283,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.getElementById('pedigreeGrid').addEventListener('change', (e) => {
             if (e.target.matches('.individual-select, .factor-select, input[type="radio"]')) {
                 if (e.target.matches('.individual-select')) {
-                    const pos = e.target.getAttribute('data-position');
-                    updateAptitudeDisplay(pos);
+                    updateAptitudeDisplay(e.target.getAttribute('data-position'));
                 }
                 saveState();
             }

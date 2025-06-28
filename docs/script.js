@@ -1,24 +1,39 @@
 const inputPedigreePositions = [
-    {gen: 1, pos: 31, label: '本人', row: 1, displayFactor: false}, {gen: 2, pos: 15, label: '父', row: 1, displayFactor: true},
-    {gen: 2, pos: 30, label: '母', row: 9, displayFactor: true}, {gen: 3, pos: 7, label: '父方祖父', row: 1, displayFactor: true},
-    {gen: 3, pos: 14, label: '父方祖母', row: 5, displayFactor: true}, {gen: 3, pos: 22, label: '母方祖父', row: 9, displayFactor: true},
-    {gen: 3, pos: 29, label: '母方祖母', row: 13, displayFactor: true}, {gen: 4, pos: 3, label: '父方祖父の父', row: 1, displayFactor: true},
-    {gen: 4, pos: 6, label: '父方祖父の母', row: 3, displayFactor: true}, {gen: 4, pos: 10, label: '父方祖母の父', row: 5, displayFactor: true},
-    {gen: 4, pos: 13, label: '父方祖母の母', row: 7, displayFactor: true}, {gen: 4, pos: 18, label: '母方祖父の父', row: 9, displayFactor: true},
-    {gen: 4, pos: 21, label: '母方祖父の母', row: 11, displayFactor: true}, {gen: 4, pos: 25, label: '母方祖母の父', row: 13, displayFactor: true},
-    {gen: 4, pos: 28, label: '母方祖母の母', row: 15, displayFactor: true}, {gen: 5, pos: 1, label: '父方祖父の父の父', row: 1, displayFactor: true},
-    {gen: 5, pos: 2, label: '父方祖父の父の母', row: 2, displayFactor: true}, {gen: 5, pos: 4, label: '父方祖父の母の父', row: 3, displayFactor: true},
-    {gen: 5, pos: 5, label: '父方祖父の母の母', row: 4, displayFactor: true}, {gen: 5, pos: 8, label: '父方祖母の父の父', row: 5, displayFactor: true},
-    {gen: 5, pos: 9, label: '父方祖母の父の母', row: 6, displayFactor: true}, {gen: 5, pos: 11, label: '父方祖母の母の父', row: 7, displayFactor: true},
-    {gen: 5, pos: 12, label: '父方祖母の母の母', row: 8, displayFactor: true}, {gen: 5, pos: 16, label: '母方祖父の父の父', row: 9, displayFactor: true},
-    {gen: 5, pos: 17, label: '母方祖父の父の母', row: 10, displayFactor: true}, {gen: 5, pos: 19, label: '母方祖父の母の父', row: 11, displayFactor: true},
-    {gen: 5, pos: 20, label: '母方祖父の母の母', row: 12, displayFactor: true}, {gen: 5, pos: 23, label: '母方祖母の父の父', row: 13, displayFactor: true},
-    {gen: 5, pos: 24, label: '母方祖母の父の母', row: 14, displayFactor: true}, {gen: 5, pos: 26, label: '母方祖母の母の父', row: 15, displayFactor: true},
+    {gen: 1, pos: 31, label: '本人', row: 1, displayFactor: false},
+    {gen: 2, pos: 15, label: '父', row: 1, displayFactor: true},
+    {gen: 2, pos: 30, label: '母', row: 9, displayFactor: true},
+    {gen: 3, pos: 7, label: '父方祖父', row: 1, displayFactor: true},
+    {gen: 3, pos: 14, label: '父方祖母', row: 5, displayFactor: true},
+    {gen: 3, pos: 22, label: '母方祖父', row: 9, displayFactor: true},
+    {gen: 3, pos: 29, label: '母方祖母', row: 13, displayFactor: true},
+    {gen: 4, pos: 3, label: '父方祖父の父', row: 1, displayFactor: true},
+    {gen: 4, pos: 6, label: '父方祖父の母', row: 3, displayFactor: true},
+    {gen: 4, pos: 10, label: '父方祖母の父', row: 5, displayFactor: true},
+    {gen: 4, pos: 13, label: '父方祖母の母', row: 7, displayFactor: true},
+    {gen: 4, pos: 18, label: '母方祖父の父', row: 9, displayFactor: true},
+    {gen: 4, pos: 21, label: '母方祖父の母', row: 11, displayFactor: true},
+    {gen: 4, pos: 25, label: '母方祖母の父', row: 13, displayFactor: true},
+    {gen: 4, pos: 28, label: '母方祖母の母', row: 15, displayFactor: true},
+    {gen: 5, pos: 1, label: '父方祖父の父の父', row: 1, displayFactor: true},
+    {gen: 5, pos: 2, label: '父方祖父の父の母', row: 2, displayFactor: true},
+    {gen: 5, pos: 4, label: '父方祖父の母の父', row: 3, displayFactor: true},
+    {gen: 5, pos: 5, label: '父方祖父の母の母', row: 4, displayFactor: true},
+    {gen: 5, pos: 8, label: '父方祖母の父の父', row: 5, displayFactor: true},
+    {gen: 5, pos: 9, label: '父方祖母の父の母', row: 6, displayFactor: true},
+    {gen: 5, pos: 11, label: '父方祖母の母の父', row: 7, displayFactor: true},
+    {gen: 5, pos: 12, label: '父方祖母の母の母', row: 8, displayFactor: true},
+    {gen: 5, pos: 16, label: '母方祖父の父の父', row: 9, displayFactor: true},
+    {gen: 5, pos: 17, label: '母方祖父の父の母', row: 10, displayFactor: true},
+    {gen: 5, pos: 19, label: '母方祖父の母の父', row: 11, displayFactor: true},
+    {gen: 5, pos: 20, label: '母方祖父の母の母', row: 12, displayFactor: true},
+    {gen: 5, pos: 23, label: '母方祖母の父の父', row: 13, displayFactor: true},
+    {gen: 5, pos: 24, label: '母方祖母の父の母', row: 14, displayFactor: true},
+    {gen: 5, pos: 26, label: '母方祖母の母の父', row: 15, displayFactor: true},
     {gen: 5, pos: 27, label: '母方祖母の母の母', row: 16, displayFactor: true}
 ];
-const displayPositions = [31, 15, 30, 7, 14, 22, 29];
+
 const factorTypes = ['芝', 'ダート', '短距離', 'マイル', '中距離', '長距離', '逃げ', '先行', '差し', '追込'];
-const aptitudeRanks = ['G', 'F', 'E', 'D', 'C', 'B', 'A'];
+const aptitudeRanks = ['G', 'F', 'E', 'D', 'C', 'B', 'A', 'S', 'SS', 'SSS']; 
 let horseData = [];
 const LOCAL_STORAGE_KEY = 'umamusumePedigreeData';
 
@@ -49,7 +64,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         horseData = csvToObjects(csvData);
         createPedigreeGrid();
         initializeDropdowns();
-        setupCopyButtons();
         setupControlButtons();
         loadStateFromLocalStorage();
     } catch (error) {
@@ -61,280 +75,324 @@ document.addEventListener('DOMContentLoaded', async function() {
 function createPedigreeGrid() {
     const container = document.getElementById('pedigreeGrid');
     if (!container) return;
+    container.innerHTML = '';
     inputPedigreePositions.forEach(p => {
         const cell = document.createElement('div');
         cell.className = 'pedigree-cell gen' + p.gen;
         cell.setAttribute('data-position', p.pos);
         let span = 1;
-        if (p.gen === 1) span = 16; else if (p.gen === 2) span = 8; else if (p.gen === 3) span = 4; else if (p.gen === 4) span = 2;
+        if (p.gen === 1) span = 16;
+        else if (p.gen === 2) span = 8;
+        else if (p.gen === 3) span = 4;
+        else if (p.gen === 4) span = 2;
         cell.style.gridRow = p.row + ' / span ' + span;
 
-        let content = `<div class="pedigree-cell-title">${p.label}</div><select id="individual_${p.pos}" class="individual-select"><option value="">未指定</option></select>`;
+        // 続柄のタイトル表示を削除
+        let content = `
+            <select id="individual-${p.pos}" class="individual-select">
+                <option value="">ウマ娘を選択</option>
+            </select>
+        `;
+
         if (p.displayFactor) {
-            content += `<div class="factor-input"><select id="factor_${p.pos}" class="factor-select"><option value="">因子選択</option></select><div class="stars-group">` +
-                [0, 1, 2, 3].map(s => `<label><input type="radio" name="stars_${p.pos}" value="${s}" id="stars_${p.pos}_${s}" ${s===0?'checked':''}>${s===0?'なし': '★'.repeat(s)}</label>`).join('') +
-                `</div></div>`;
+            let factorHtml = '<div class="factors-grid">';
+            factorTypes.forEach(type => {
+                factorHtml += `
+                    <div class="factor-group">
+                        <label for="factor-${type}-${p.pos}">${type}</label>
+                        <select id="factor-${type}-${p.pos}" class="factor-select">
+                            <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                        </select>
+                    </div>`;
+            });
+            factorHtml += '</div>';
+            let starsHtml = '<div class="stars-group">';
+            for (let i = 3; i >= 1; i--) {
+                starsHtml += `<label><input type="radio" name="stars-${p.pos}" value="${i}"> ${'★'.repeat(i)}</label>`;
+            }
+            starsHtml += '</div>';
+            content += starsHtml + factorHtml;
         }
-        if (p.pos === 22) content += `<button type="button" class="copy-button" data-action="copyGrandfather">父方祖父系統からコピー</button>`;
-        else if (p.pos === 29) content += `<button type="button" class="copy-button" data-action="copyGrandmother">父方祖母系統からコピー</button>`;
-        
-        if (displayPositions.includes(p.pos)) {
-            content += `<div id="aptitude_${p.pos}" class="aptitude-display" style="display:none;"></div>`;
+        if (p.gen === 1) {
+            content += `<div class="aptitude-display" id="aptitude-display-${p.pos}"></div>`;
         }
         cell.innerHTML = content;
         container.appendChild(cell);
     });
 }
 
-function collectFormData() {
-    const data = {};
+function initializeDropdowns() {
+    const sortedHorseData = [...horseData].sort((a, b) => a['名前'].localeCompare(b['名前'], 'ja'));
+    const optionsHtml = sortedHorseData.map(h => `<option value="${h['名前']}">${h['名前']}</option>`).join('');
     inputPedigreePositions.forEach(p => {
-        const pos = p.pos;
-        data[`individual_${pos}`] = document.getElementById(`individual_${pos}`)?.value;
-        if (p.displayFactor) {
-            data[`factor_${pos}`] = document.getElementById(`factor_${pos}`)?.value;
-            const starRadio = document.querySelector(`input[name="stars_${pos}"]:checked`);
-            data[`stars_${pos}`] = starRadio ? starRadio.value : '0';
-        }
-    });
-    return data;
-}
-
-function saveStateToLocalStorage() { if (typeof(Storage) !== "undefined") localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(collectFormData())); }
-function loadStateFromLocalStorage() { const data = localStorage.getItem(LOCAL_STORAGE_KEY); if (data) applyDataToForm(JSON.parse(data)); }
-
-function applyDataToForm(data) {
-    inputPedigreePositions.forEach(p => {
-        const pos = p.pos;
-        const indSel = document.getElementById(`individual_${p.pos}`);
-        if (indSel && data[`individual_${p.pos}`]) {
-            indSel.value = data[`individual_${p.pos}`];
-            indSel.dispatchEvent(new Event('change'));
-            if (p.displayFactor) {
-                const facSel = document.getElementById(`factor_${p.pos}`);
-                if (facSel && data[`factor_${p.pos}`]) facSel.value = data[`factor_${p.pos}`];
-                if (data[`stars_${p.pos}`]) {
-                    const starRad = document.getElementById(`stars_${p.pos}_${data[`stars_${p.pos}`]}`);
-                    if (starRad) starRad.checked = true;
-                }
+        const select = document.getElementById(`individual-${p.pos}`);
+        if (select) {
+            select.innerHTML += optionsHtml;
+            if (p.gen === 1) {
+                select.addEventListener('change', (e) => displayBaseAptitude(e.target.value, p.pos));
             }
         }
     });
 }
 
 function setupControlButtons() {
-    document.getElementById('calculate-button').addEventListener('click', () => { calculateAptitudes(); handleExport(); });
-    document.getElementById('reset-button').addEventListener('click', () => { if (confirm("入力内容をリセットしますか？")) { localStorage.removeItem(LOCAL_STORAGE_KEY); location.reload(); } });
-    document.getElementById('import-button').addEventListener('click', () => {
-        const text = document.getElementById('import-data-input').value;
-        if (!text.trim()) { alert("インポートデータを入力してください。"); return; }
-        try { applyDataToForm(JSON.parse(text)); saveStateToLocalStorage(); alert("インポートしました。"); } catch (e) { alert("データ形式が正しくありません。"); }
-    });
-    document.getElementById('copy-export-button').addEventListener('click', () => {
-        const textarea = document.getElementById('export-data-output');
-        navigator.clipboard.writeText(textarea.value).then(() => { textarea.select(); alert('クリップボードにコピーしました'); });
-    });
-}
-
-function handleExport() {
-    const container = document.getElementById('export-container');
-    const textarea = document.getElementById('export-data-output');
-    textarea.value = JSON.stringify(collectFormData(), null, 2);
-    container.style.display = 'block';
-}
-
-function initializeDropdowns() {
-    const horseNames = horseData.map(horse => horse.名前).sort();
-    const handler = (e) => {
-        const target = e.target;
-        if (target.classList.contains('individual-select')) {
-            updateHorseSelection(target.id.split('_')[1], target.value);
+    document.getElementById('calculate-button').addEventListener('click', calculateAndDisplayResults);
+    document.getElementById('reset-button').addEventListener('click', () => {
+        if (confirm('すべての入力内容をリセットしますか？')) {
+            localStorage.removeItem(LOCAL_STORAGE_KEY);
+            createPedigreeGrid();
+            initializeDropdowns();
+            document.getElementById('resultsContainer').style.display = 'none';
+            document.getElementById('export-container').style.display = 'none';
         }
-        saveStateToLocalStorage();
-    };
-    document.querySelectorAll('.individual-select').forEach(s => { horseNames.forEach(n => { const o = document.createElement('option'); o.value = n; o.textContent = n; s.appendChild(o); }); s.addEventListener('change', handler); });
-    document.querySelectorAll('.factor-select').forEach(s => { factorTypes.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; s.appendChild(o); }); s.addEventListener('change', handler); });
-    document.querySelectorAll('input[type="radio"]').forEach(r => r.addEventListener('change', handler));
+    });
+    document.getElementById('import-button').addEventListener('click', importState);
+    document.getElementById('copy-export-button').addEventListener('click', copyExportData);
+    // 自動保存
+    document.getElementById('pedigreeGrid').addEventListener('change', saveStateToLocalStorage);
 }
 
-function updateHorseSelection(pos, horseName) {
-    const isDisplay = displayPositions.includes(parseInt(pos));
-    const aptDiv = document.getElementById('aptitude_' + pos);
-    if (isDisplay && horseName) {
-        const horse = horseData.find(h => h.名前 === horseName);
-        if (horse) {
-            aptDiv.innerHTML = formatAptitudeTable(horse);
-            aptDiv.style.display = 'block';
-            selectBestFactor(pos, horse);
-        }
-    } else if (aptDiv) {
-        aptDiv.innerHTML = '';
-        aptDiv.style.display = 'none';
+function displayBaseAptitude(name, pos) {
+    const displayDiv = document.getElementById(`aptitude-display-${pos}`);
+    if (!name) {
+        displayDiv.innerHTML = '';
+        return;
     }
-}
-
-function selectBestFactor(pos, horse) {
-    const factorSelect = document.getElementById('factor_' + pos);
-    if (!factorSelect) return;
-    const aptitudes = factorTypes.map(t => ({ t, v: horse[t] })).sort((a, b) => aptitudeRanks.indexOf(b.v) - aptitudeRanks.indexOf(a.v));
-    factorSelect.value = (aptitudes.length > 0 && aptitudes[0].v !== 'G') ? aptitudes[0].t : '';
-}
-
-function setupCopyButtons() {
-    document.querySelectorAll('.copy-button').forEach(b => {
-        b.addEventListener('click', function() {
-            const action = this.getAttribute('data-action');
-            if (action === 'copyGrandfather') copyPaternalBranch(7, 22);
-            else if (action === 'copyGrandmother') copyPaternalBranch(14, 29);
-            saveStateToLocalStorage();
-        });
-    });
-}
-
-function copyPaternalBranch(fromPos, toPos) {
-    const branchMap = { 7: [3, 6, 1, 2, 4, 5], 14: [10, 13, 8, 9, 11, 12] };
-    const copyMap = { 22: [18, 21, 16, 17, 19, 20], 29: [25, 28, 23, 24, 26, 27] };
-    copyIndividualData(fromPos, toPos);
-    branchMap[fromPos].forEach((from, i) => copyIndividualData(from, copyMap[toPos][i]));
-}
-
-// ★★★★★ コピー機能の修正箇所 ★★★★★
-function copyIndividualData(fromPos, toPos) {
-    const fromInd = document.getElementById(`individual_${fromPos}`);
-    const toInd = document.getElementById(`individual_${toPos}`);
-    toInd.value = fromInd.value;
-
-    const fromFactor = document.getElementById(`factor_${fromPos}`);
-    const fromFactorValue = fromFactor ? fromFactor.value : '';
-    
-    const fromStar = document.querySelector(`input[name="stars_${fromPos}"]:checked`);
-    const fromStarValue = fromStar ? fromStar.value : '0';
-
-    const horse = horseData.find(h => h.名前 === toInd.value);
-    const aptDiv = document.getElementById('aptitude_' + toPos);
-    if (horse && aptDiv) {
-        aptDiv.innerHTML = formatAptitudeTable(horse);
-        aptDiv.style.display = 'block';
-    } else if (aptDiv) {
-        aptDiv.innerHTML = '';
-        aptDiv.style.display = 'none';
+    const horse = horseData.find(h => h['名前'] === name);
+    if (!horse) {
+        displayDiv.innerHTML = '';
+        return;
     }
-    
-    const toFactor = document.getElementById(`factor_${toPos}`);
-    if(toFactor) toFactor.value = fromFactorValue;
-
-    const toStar = document.getElementById(`stars_${toPos}_${fromStarValue}`);
-    if (toStar) toStar.checked = true;
-}
-
-
-function calculateAptitudes() {
-    const formData = collectFormData();
-    const results = { individuals: {}, originalAptitudes: {}, correctedAptitudes: {}, changes: {}, genePotentials: {} };
-    inputPedigreePositions.forEach(({pos}) => {
-        const horseName = formData[`individual_${pos}`];
-        if (!horseName) return;
-        const horse = horseData.find(h => h.名前 === horseName);
-        if (!horse) return;
-        results.individuals[pos] = { name: horseName, factor: formData[`factor_${pos}`] || '', stars: formData[`stars_${pos}`] || '0' };
-        results.originalAptitudes[pos] = { ...horse };
-        const factorBoosts = calculateFactorBoosts(pos, formData);
-        results.correctedAptitudes[pos] = {};
-        results.changes[pos] = {};
-        factorTypes.forEach(type => {
-            const originalRank = results.originalAptitudes[pos][type];
-            const boost = factorBoosts[type] || 0;
-            const correctedRank = applyBoostToRank(originalRank, boost);
-            results.correctedAptitudes[pos][type] = correctedRank;
-            results.changes[pos][type] = (originalRank !== correctedRank);
-        });
-        results.genePotentials[pos] = calculateGenePotential(pos, formData);
-    });
-    displayResults(results);
-}
-
-function calculateFactorBoosts(targetPos, formData) {
-    const boosts = {}; factorTypes.forEach(t => boosts[t] = 0);
-    const map = { 31: [15, 30, 7, 14, 22, 29], 15: [7, 14, 3, 6, 10, 13], 30: [22, 29, 18, 21, 25, 28], 7: [3, 6, 1, 2, 4, 5], 14: [10, 13, 8, 9, 11, 12], 22: [18, 21, 16, 17, 19, 20], 29: [25, 28, 23, 24, 26, 27] };
-    (map[targetPos] || []).forEach(p => { const f = formData[`factor_${p}`], s = parseInt(formData[`stars_${p}`] || '0'); if (f && s > 0) boosts[f] = (boosts[f] || 0) + s; });
-    const levels = {}; for (const t in boosts) { const stars = boosts[t]; if (stars >= 10) levels[t] = 4; else if (stars >= 7) levels[t] = 3; else if (stars >= 4) levels[t] = 2; else if (stars >= 1) levels[t] = 1; else levels[t] = 0; }
-    return levels;
-}
-
-function applyBoostToRank(rank, boost) { if (boost <= 0) return rank; const idx = aptitudeRanks.indexOf(rank); if (idx === -1) return rank; return aptitudeRanks[Math.min(idx + boost, aptitudeRanks.length - 1)]; }
-
-function calculateGenePotential(pos, formData) {
-    const map = { 31: [15, 30, 7, 14, 22, 29], 15: [7, 14, 3, 6, 10, 13], 30: [22, 29, 18, 21, 25, 28], 7: [3, 6, 1, 2, 4, 5], 14: [10, 13, 8, 9, 11, 12], 22: [18, 21, 16, 17, 19, 20], 29: [25, 28, 23, 24, 26, 27] };
-    const counts = {}; (map[pos] || []).forEach(p => { const f = formData[`factor_${p}`], s = parseInt(formData[`stars_${p}`] || '0'); if (f && s > 0) counts[f] = (counts[f] || 0) + s; });
-    const potentials = []; for (const type in counts) { const stars = counts[type]; if (stars >= 12) potentials.push({type, status: 'confirmed', stars}); else if (stars >= 6) potentials.push({type, status: 'potential', stars}); }
-    return potentials.sort((a, b) => b.stars - a.stars).slice(0, 3);
-}
-
-// ★★★★★ 結果表示関数（修正箇所） ★★★★★
-function displayResults(results) {
-    const resultDiv = document.getElementById('results');
-    if (!resultDiv) return;
-    let html = '<h2>計算結果</h2><div class="results-pedigree-container">';
-    const layoutMap = {
-        1: { pos: 31, col: 1, row: 1, rowSpan: 16 }, 2: [{ pos: 15, col: 2, row: 1, rowSpan: 8 }, { pos: 30, col: 2, row: 9, rowSpan: 8 }],
-        3: [{ pos: 7,  col: 3, row: 1, rowSpan: 4 }, { pos: 14, col: 3, row: 5, rowSpan: 4 }, { pos: 22, col: 3, row: 9, rowSpan: 4 }, { pos: 29, col: 3, row: 13, rowSpan: 4 }],
-        4: [{ pos: 3, col: 4, row: 1, rowSpan: 2 }, { pos: 6, col: 4, row: 3, rowSpan: 2 }, { pos: 10, col: 4, row: 5, rowSpan: 2 }, { pos: 13, col: 4, row: 7, rowSpan: 2 }, { pos: 18, col: 4, row: 9, rowSpan: 2 }, { pos: 21, col: 4, row: 11, rowSpan: 2 }, { pos: 25, col: 4, row: 13, rowSpan: 2 }, { pos: 28, col: 4, row: 15, rowSpan: 2 }],
-        5: [{ pos: 1, col: 5, row: 1 }, { pos: 2, col: 5, row: 2 }, { pos: 4, col: 5, row: 3 }, { pos: 5, col: 5, row: 4 }, { pos: 8, col: 5, row: 5 }, { pos: 9, col: 5, row: 6 }, { pos: 11, col: 5, row: 7 }, { pos: 12, col: 5, row: 8 }, { pos: 16, col: 5, row: 9 }, { pos: 17, col: 5, row: 10 }, { pos: 19, col: 5, row: 11 }, { pos: 20, col: 5, row: 12 }, { pos: 23, col: 5, row: 13 }, { pos: 24, col: 5, row: 14 }, { pos: 26, col: 5, row: 15 }, { pos: 27, col: 5, row: 16 }]
-    };
-    [layoutMap[1], ...layoutMap[2], ...layoutMap[3], ...layoutMap[4], ...layoutMap[5]].forEach(p => {
-        const individual = results.individuals[p.pos];
-        const name = individual ? individual.name.split('[')[0].trim() : '未指定';
-        const factor = (individual && individual.factor && individual.stars > 0) ? `${individual.factor}${individual.stars}★` : '';
-        const style = `grid-column: ${p.col}; grid-row: ${p.row} / span ${p.rowSpan || 1};`;
-        html += `<div class="result-cell" style="${style}">`;
-        html += `<div class="individual-name">${name}</div>`;
-        if (factor) html += `<div class="factor-info">${factor}</div>`;
-        if (individual && displayPositions.includes(p.pos)) {
-            html += `<div class="aptitude-display" style="display:block;">${formatAptitudeTable(results.correctedAptitudes[p.pos], results.changes[p.pos])}</div>`;
-            html += generateGenePotentialHTML(results.genePotentials[p.pos]);
-        }
-        html += '</div>';
-    });
-    html += '</div>';
-    html += `<div class="calculation-info"><h3>補足</h3><ul>` +
-            `<li><b>適性補正:</b> 1・2代前の因子☆1/4/7/10個で適性が1/2/3/4段階UP (A上限)。<span style="color:red; font-weight:bold;">赤字</span>は上昇した項目。</li>` +
-            `<li><b>遺伝子:</b> 同種因子☆6以上で「獲得」、☆12以上で「確定」と表示。</li>` +
-            `</ul></div>`;
-    resultDiv.innerHTML = html;
-    resultDiv.style.display = 'block';
-}
-
-// ★★★★★ 適性表示関数（修正箇所） ★★★★★
-function formatAptitudeTable(aptitudes, changes = {}) {
-    if (!aptitudes) return '';
-    let html = '<table class="aptitude-table">';
-    const layout = [
+    const labels = {'芝': '芝', 'ダート': 'ダ', '短距離': '短', 'マイル': 'マ', '中距離': '中', '長距離': '長', '逃げ': '逃', '先行': '先', '差し': '差', '追込': '追'};
+    let html = '<h6>初期適性</h6><table class="aptitude-table">';
+    const displayOrder = [
         ['芝', 'ダート'],
         ['短距離', 'マイル', '中距離', '長距離'],
         ['逃げ', '先行', '差し', '追込']
     ];
-    const labels = {'芝':'芝', 'ダート':'ダ', '短距離':'短', 'マイル':'マ', '中距離':'中', '長距離':'長', '逃げ':'逃', '先行':'先', '差し':'差', '追込':'追'};
-    
-    layout.forEach(row => {
+    displayOrder.forEach(row => {
         html += '<tr>';
-        row.forEach(type => { html += `<td><span class="apt-label">${labels[type]}</span></td>`; });
+        row.forEach(type => html += `<td class="apt-label">${labels[type]}</td>`);
         html += '</tr><tr>';
         row.forEach(type => {
-            const rank = aptitudes[type] || 'G';
-            const isChanged = changes[type] || false;
-            html += `<td class="rank-${rank}"><span class="apt-value${isChanged ? ' changed' : ''}">${rank}</span></td>`;
+            const rank = horse[type] || 'G';
+            html += `<td class="apt-value rank-${rank}">${rank}</td>`;
         });
         html += '</tr>';
     });
     html += '</table>';
-    return html;
+    displayDiv.innerHTML = html;
 }
 
-
-function generateGenePotentialHTML(potentials) {
-    if (!potentials || potentials.length === 0) return '';
-    let html = '<div class="gene-potential">';
-    potentials.forEach(p => { html += `<div>${p.status === 'confirmed' ? `<strong>${p.type}遺伝子確定</strong>` : `${p.type}遺伝子獲得`} (${p.stars}☆)</div>`; });
-    html += '</div>';
-    return html;
+function calculateAptitude(baseRank, factorValue) {
+    let rankIndex = aptitudeRanks.indexOf(baseRank);
+    if (rankIndex === -1) return baseRank;
+    if (factorValue >= 10) rankIndex += 3;
+    else if (factorValue >= 7) rankIndex += 2;
+    else if (factorValue >= 1) rankIndex += 1;
+    return aptitudeRanks[Math.min(rankIndex, aptitudeRanks.length - 1)];
 }
+
+function saveStateToLocalStorage() {
+    const state = {};
+    // 全世代の入力情報を保存
+    inputPedigreePositions.forEach(p => {
+        const pos = p.pos;
+        const individualSelect = document.getElementById(`individual-${pos}`);
+        if (!individualSelect) return;
+        const factorSelects = factorTypes.map(type => document.getElementById(`factor-${type}-${pos}`));
+        const starRadios = Array.from(document.querySelectorAll(`input[name="stars-${pos}"]:checked`));
+        state[pos] = {
+            individual: individualSelect.value,
+            factors: {},
+            stars: starRadios.length > 0 ? parseInt(starRadios[0].value) : 0
+        };
+        factorSelects.forEach((select, index) => {
+            if (select) {
+                const type = factorTypes[index];
+                state[pos].factors[type] = select.value;
+            }
+        });
+    });
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+    // エクスポート用データも更新
+    const exportContainer = document.getElementById('export-container');
+    const exportData = document.getElementById('export-data');
+    exportData.value = JSON.stringify(state);
+    exportContainer.style.display = 'block';
+}
+
+function loadStateFromLocalStorage() {
+    const savedState = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (!savedState) return;
+    const state = JSON.parse(savedState);
+    loadState(state);
+}
+
+function importState() {
+    const importArea = document.getElementById('import-area');
+    try {
+        const state = JSON.parse(importArea.value);
+        loadState(state);
+        saveStateToLocalStorage();
+        importArea.value = '';
+    } catch (e) {
+        alert('データの形式が正しくありません。');
+        console.error("Import failed:", e);
+    }
+}
+
+function loadState(state) {
+    Object.keys(state).forEach(posStr => {
+        const pos = parseInt(posStr);
+        const data = state[pos];
+        if (data.individual) {
+            const indSelect = document.getElementById(`individual-${pos}`);
+            if(indSelect) {
+                indSelect.value = data.individual;
+                if(pos === 31) displayBaseAptitude(data.individual, pos);
+            }
+        }
+        if (data.stars) {
+            const starRadio = document.querySelector(`input[name="stars-${pos}"][value="${data.stars}"]`);
+            if(starRadio) starRadio.checked = true;
+        }
+        if (data.factors) {
+            factorTypes.forEach(type => {
+                const factorSelect = document.getElementById(`factor-${type}-${pos}`);
+                if (factorSelect && data.factors[type]) {
+                    factorSelect.value = data.factors[type];
+                }
+            });
+        }
+    });
+}
+
+function copyExportData() {
+    const exportData = document.getElementById('export-data');
+    exportData.select();
+    document.execCommand('copy');
+    alert('クリップボードにコピーしました。');
+}
+
+function calculateAndDisplayResults() {
+    const resultsContainer = document.getElementById('resultsContainer');
+    const pedigreeContainer = document.getElementById('resultsPedigreeContainer');
+    const calculationInfo = document.getElementById('calculationInfo');
+    pedigreeContainer.innerHTML = '';
+    calculationInfo.innerHTML = '';
+
+    const selectedIndividuals = {};
+    const selectedFactors = {};
+    const selectedStars = {};
+    inputPedigreePositions.forEach(p => {
+        const pos = p.pos;
+        const individualSelect = document.getElementById(`individual-${pos}`);
+        if (individualSelect && individualSelect.value) {
+            selectedIndividuals[pos] = individualSelect.value;
+            selectedStars[pos] = parseInt(document.querySelector(`input[name="stars-${pos}"]:checked`)?.value || '0');
+            selectedFactors[pos] = {};
+            factorTypes.forEach(type => {
+                const factorSelect = document.getElementById(`factor-${type}-${pos}`);
+                if (factorSelect) selectedFactors[pos][type] = factorSelect.value;
+            });
+        }
+    });
+
+    if (!selectedIndividuals[31]) {
+        resultsContainer.style.display = 'none';
+        return;
+    }
+    resultsContainer.style.display = 'block';
+
+    const baseAptitudes = {};
+    const baseHorse = horseData.find(h => h['名前'] === selectedIndividuals[31]);
+    if (!baseHorse) return;
+    factorTypes.forEach(type => { baseAptitudes[type] = baseHorse[type] || 'G'; });
+
+    const totalFactors = {};
+    factorTypes.forEach(type => { totalFactors[type] = 0; });
+
+    // 全世代の親子関係を定義
+    const inheritanceMap = {
+        15: [7, 14],   30: [22, 29],
+        7: [3, 6],     14: [10, 13],
+        22: [18, 21],  29: [25, 28],
+        3: [1, 2],     6: [4, 5],
+        10: [8, 9],    13: [11, 12],
+        18: [16, 17],  21: [19, 20],
+        25: [23, 24],  28: [26, 27]
+    };
+
+    function getInheritanceFactor(pos, type) {
+        if (!selectedIndividuals[pos]) return 0;
+        const star = selectedStars[pos] || 0;
+        const factorValue = parseInt(selectedFactors[pos]?.[type] || '0');
+        let totalFactor = factorValue * star;
+        const parents = inheritanceMap[pos];
+        if (parents) {
+            totalFactor += Math.floor((getInheritanceFactor(parents[0], type) + getInheritanceFactor(parents[1], type)) / 2);
+        }
+        return totalFactor;
+    }
+
+    factorTypes.forEach(type => {
+        totalFactors[type] = getInheritanceFactor(15, type) + getInheritanceFactor(30, type);
+    });
+
+    const finalAptitudes = {};
+    const changedTypes = {}; // 適性変化を追跡
+    factorTypes.forEach(type => {
+        const baseRank = baseAptitudes[type] || 'G';
+        const factorValue = totalFactors[type] || 0;
+        const finalRank = calculateAptitude(baseRank, factorValue);
+        finalAptitudes[type] = finalRank;
+        if (baseRank !== finalRank) changedTypes[type] = true;
+    });
+
+    const labels = {'芝': '芝', 'ダート': 'ダ', '短距離': '短', 'マイル': 'マ', '中距離': '中', '長距離': '長', '逃げ': '逃', '先行': '先', '差し': '差', '追込': '追'};
+    const turfHeader = `<td>${labels['芝']}</td><td>${labels['ダート']}</td>`;
+    const distanceHeader = `<td>${labels['短距離']}</td><td>${labels['マイル']}</td><td>${labels['中距離']}</td><td>${labels['長距離']}</td>`;
+    const strategyHeader = `<td>${labels['逃げ']}</td><td>${labels['先行']}</td><td>${labels['差し']}</td><td>${labels['追込']}</td>`;
+
+    // 変化した適性に 'changed' クラスを付与
+    const turfValues = `<td class="apt-value rank-${finalAptitudes['芝']} ${changedTypes['芝'] ? 'changed' : ''}">${finalAptitudes['芝']}</td><td class="apt-value rank-${finalAptitudes['ダート']} ${changedTypes['ダート'] ? 'changed' : ''}">${finalAptitudes['ダート']}</td>`;
+    const distanceValues = `<td class="apt-value rank-${finalAptitudes['短距離']} ${changedTypes['短距離'] ? 'changed' : ''}">${finalAptitudes['短距離']}</td><td class="apt-value rank-${finalAptitudes['マイル']} ${changedTypes['マイル'] ? 'changed' : ''}">${finalAptitudes['マイル']}</td><td class="apt-value rank-${finalAptitudes['中距離']} ${changedTypes['中距離'] ? 'changed' : ''}">${finalAptitudes['中距離']}</td><td class="apt-value rank-${finalAptitudes['長距離']} ${changedTypes['長距離'] ? 'changed' : ''}">${finalAptitudes['長距離']}</td>`;
+    const strategyValues = `<td class="apt-value rank-${finalAptitudes['逃げ']} ${changedTypes['逃げ'] ? 'changed' : ''}">${finalAptitudes['逃げ']}</td><td class="apt-value rank-${finalAptitudes['先行']} ${changedTypes['先行'] ? 'changed' : ''}">${finalAptitudes['先行']}</td><td class="apt-value rank-${finalAptitudes['差し']} ${changedTypes['差し'] ? 'changed' : ''}">${finalAptitudes['差し']}</td><td class="apt-value rank-${finalAptitudes['追込']} ${changedTypes['追込'] ? 'changed' : ''}">${finalAptitudes['追込']}</td>`;
+
+    // 全世代を結果血統表に表示
+    const resultPositions = inputPedigreePositions.map(p => {
+        const col = 6 - p.gen;
+        let rowSpan = 1;
+        if (p.gen === 1) rowSpan = 16;
+        else if (p.gen === 2) rowSpan = 8;
+        else if (p.gen === 3) rowSpan = 4;
+        else if (p.gen === 4) rowSpan = 2;
+        return { pos: p.pos, row: p.row, col, rowSpan, colSpan: 1 };
+    });
+
+    resultPositions.forEach(p => {
+        const name = selectedIndividuals[p.pos];
+        if (!name) return;
+        const cell = document.createElement('div');
+        cell.className = 'result-cell';
+        cell.style.gridArea = `${p.row} / ${p.col} / span ${p.rowSpan} / span 1`;
+        let content = `<div class="individual-name">${name}</div>`;
+        if (p.pos !== 31) {
+            const stars = selectedStars[p.pos] || 0;
+            if (stars > 0) content += `<div class="factor-info">青因子 ★${stars}</div>`;
+        } else {
+            content += `<table class="aptitude-table">
+                <tr>${turfHeader}</tr><tr>${turfValues}</tr>
+                <tr>${distanceHeader}</tr><tr>${distanceValues}</tr>
+                <tr>${strategyHeader}</tr><tr>${strategyValues}</tr>
+            </table>`;
+        }
+        cell.innerHTML = content;
+        pedigreeContainer.appendChild(cell);
+    });
+
+    let infoHtml = '<ul>';
+    factorTypes.forEach(type => {
+        const base = baseAptitudes[type], final = finalAptitudes[type];
+        if (base !== final

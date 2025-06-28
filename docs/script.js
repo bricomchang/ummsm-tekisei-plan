@@ -58,6 +58,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 });
 
+// ★★★★★ 入力欄生成関数の修正 ★★★★★
 function createPedigreeGrid() {
     const container = document.getElementById('pedigreeGrid');
     if (!container) return;
@@ -68,6 +69,7 @@ function createPedigreeGrid() {
         let span = 1;
         if (p.gen === 1) span = 16; else if (p.gen === 2) span = 8; else if (p.gen === 3) span = 4; else if (p.gen === 4) span = 2;
         cell.style.gridRow = p.row + ' / span ' + span;
+
         let content = `<div class="pedigree-cell-title">${p.label}</div><select id="individual_${p.pos}" class="individual-select"><option value="">未指定</option></select>`;
         if (p.displayFactor) {
             content += `<div class="factor-input"><select id="factor_${p.pos}" class="factor-select"><option value="">因子選択</option></select><div class="stars-group">` +
@@ -76,7 +78,10 @@ function createPedigreeGrid() {
         }
         if (p.pos === 22) content += `<button type="button" class="copy-button" data-action="copyGrandfather">父方祖父系統からコピー</button>`;
         else if (p.pos === 29) content += `<button type="button" class="copy-button" data-action="copyGrandmother">父方祖母系統からコピー</button>`;
-        if (displayPositions.includes(p.pos)) content += `<div id="aptitude_${p.pos}" class="aptitude-display" style="display:none;"></div>`;
+        
+        if (displayPositions.includes(p.pos)) {
+            content += `<div id="aptitude_${p.pos}" class="aptitude-display" style="display:none;"></div>`;
+        }
         cell.innerHTML = content;
         container.appendChild(cell);
     });
@@ -105,15 +110,16 @@ function applyDataToForm(data) {
         const indSel = document.getElementById(`individual_${pos}`);
         if (indSel && data[`individual_${pos}`]) {
             indSel.value = data[`individual_${pos}`];
-            indSel.dispatchEvent(new Event('change'));
-        }
-        if (p.displayFactor) {
-            const facSel = document.getElementById(`factor_${pos}`);
-            if (facSel && data[`factor_${pos}`]) facSel.value = data[`factor_${pos}`];
-            if (data[`stars_${pos}`]) {
-                const starRad = document.getElementById(`stars_${pos}_${data[`stars_${pos}`]}`);
-                if (starRad) starRad.checked = true;
+            // 因子情報を先に設定してからイベントを発火させる
+            if (p.displayFactor) {
+                const facSel = document.getElementById(`factor_${p.pos}`);
+                if (facSel && data[`factor_${p.pos}`]) facSel.value = data[`factor_${p.pos}`];
+                if (data[`stars_${p.pos}`]) {
+                    const starRad = document.getElementById(`stars_${p.pos}_${data[`stars_${p.pos}`]}`);
+                    if (starRad) starRad.checked = true;
+                }
             }
+            indSel.dispatchEvent(new Event('change'));
         }
     });
 }
@@ -142,13 +148,15 @@ function handleExport() {
 function initializeDropdowns() {
     const horseNames = horseData.map(horse => horse.名前).sort();
     const handler = (e) => {
-        if (e.target.classList.contains('individual-select')) updateHorseSelection(e.target.id.split('_')[1], e.target.value);
+        if (e.target.classList.contains('individual-select')) {
+            updateHorseSelection(e.target.id.split('_')[1], e.target.value);
+        }
         saveStateToLocalStorage();
     };
     document.querySelectorAll('.individual-select').forEach(s => { horseNames.forEach(n => { const o = document.createElement('option'); o.value = n; o.textContent = n; s.appendChild(o); }); s.addEventListener('change', handler); });
     document.querySelectorAll('.factor-select').forEach(s => { factorTypes.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; s.appendChild(o); }); s.addEventListener('change', handler); });
-    document.querySelectorAll('input[type="radio"]').forEach(r => r.addEventListener('change', handler);
-});
+    document.querySelectorAll('input[type="radio"]').forEach(r => r.addEventListener('change', handler));
+}
 
 function updateHorseSelection(pos, horseName) {
     const isDisplay = displayPositions.includes(parseInt(pos));
@@ -161,7 +169,8 @@ function updateHorseSelection(pos, horseName) {
             selectBestFactor(pos, horse);
         }
     } else if (aptDiv) {
-        aptDiv.innerHTML = ''; aptDiv.style.display = 'none';
+        aptDiv.innerHTML = '';
+        aptDiv.style.display = 'none';
     }
 }
 
@@ -202,7 +211,6 @@ function copyIndividualData(fromPos, toPos) {
     const fromStar = document.querySelector(`input[name="stars_${fromPos}"]:checked`);
     const fromStarValue = fromStar ? fromStar.value : '0';
 
-    // 適性表示のみを更新（changeイベントは発火させない）
     const horse = horseData.find(h => h.名前 === toInd.value);
     const aptDiv = document.getElementById('aptitude_' + toPos);
     if (horse && aptDiv) {
@@ -213,7 +221,6 @@ function copyIndividualData(fromPos, toPos) {
         aptDiv.style.display = 'none';
     }
     
-    // 因子と★の値を直接設定
     const toFactor = document.getElementById(`factor_${toPos}`);
     if(toFactor) toFactor.value = fromFactorValue;
 
@@ -312,9 +319,10 @@ function formatAptitudeTable(aptitudes, changes = {}) {
         html += '</tr><tr>';
         row.forEach(type => {
             if (type) {
-                const isChanged = changes[type];
-                const className = `apt-value rank-${aptitudes[type]}${isChanged ? ' changed' : ''}`;
-                html += `<td><span class="${className}">${aptitudes[type]}</span></td>`;
+                const rank = aptitudes[type] || 'G'; // データがない場合はGとして扱う
+                const isChanged = changes[type] || false;
+                const className = `apt-value rank-${rank}${isChanged ? ' changed' : ''}`;
+                html += `<td><span class="${className}">${rank}</span></td>`;
             } else {
                 html += '<td></td>';
             }

@@ -1,51 +1,23 @@
-// 血統表のポジションデータ
-const pedigreePositions = [
-    {gen: 1, pos: 31, label: '本人', row: 1, col: 5, span: 4},
-    {gen: 2, pos: 15, label: '父', row: 1, col: 3, span: 2},
-    {gen: 2, pos: 30, label: '母', row: 3, col: 3, span: 2},
-    {gen: 3, pos: 7, label: '父方祖父', row: 1, col: 2, span: 1},
-    {gen: 3, pos: 14, label: '父方祖母', row: 2, col: 2, span: 1},
-    {gen: 3, pos: 22, label: '母方祖父', row: 3, col: 2, span: 1},
-    {gen: 3, pos: 29, label: '母方祖母', row: 4, col: 2, span: 1},
-    {gen: 4, pos: 3, label: '父方祖父の父', row: 1, col: 1, span: 1},
-    {gen: 4, pos: 6, label: '父方祖父の母', row: 1, col: 1, span: 1},
-    {gen: 4, pos: 10, label: '父方祖母の父', row: 2, col: 1, span: 1},
-    {gen: 4, pos: 13, label: '父方祖母の母', row: 2, col: 1, span: 1},
-    {gen: 4, pos: 18, label: '母方祖父の父', row: 3, col: 1, span: 1},
-    {gen: 4, pos: 21, label: '母方祖父の母', row: 3, col: 1, span: 1},
-    {gen: 4, pos: 25, label: '母方祖母の父', row: 4, col: 1, span: 1},
-    {gen: 4, pos: 28, label: '母方祖母の母', row: 4, col: 1, span: 1}
-];
+// ★★★★★ ポジションデータは入力フォーム専用に ★★★★★
 const inputPedigreePositions = [
-    {gen: 1, pos: 31, label: '本人', row: 1, displayFactor: false},
-    {gen: 2, pos: 15, label: '父', row: 1, displayFactor: true},
-    {gen: 2, pos: 30, label: '母', row: 9, displayFactor: true},
-    {gen: 3, pos: 7, label: '父方祖父', row: 1, displayFactor: true},
-    {gen: 3, pos: 14, label: '父方祖母', row: 5, displayFactor: true},
-    {gen: 3, pos: 22, label: '母方祖父', row: 9, displayFactor: true},
-    {gen: 3, pos: 29, label: '母方祖母', row: 13, displayFactor: true},
-    {gen: 4, pos: 3, label: '父方祖父の父', row: 1, displayFactor: true},
-    {gen: 4, pos: 6, label: '父方祖父の母', row: 3, displayFactor: true},
-    {gen: 4, pos: 10, label: '父方祖母の父', row: 5, displayFactor: true},
-    {gen: 4, pos: 13, label: '父方祖母の母', row: 7, displayFactor: true},
-    {gen: 4, pos: 18, label: '母方祖父の父', row: 9, displayFactor: true},
-    {gen: 4, pos: 21, label: '母方祖父の母', row: 11, displayFactor: true},
-    {gen: 4, pos: 25, label: '母方祖母の父', row: 13, displayFactor: true},
-    {gen: 4, pos: 28, label: '母方祖母の母', row: 15, displayFactor: true},
-    {gen: 5, pos: 1, label: '父方祖父の父の父', row: 1, displayFactor: true}, {gen: 5, pos: 2, label: '父方祖父の父の母', row: 2, displayFactor: true},
-    {gen: 5, pos: 4, label: '父方祖父の母の父', row: 3, displayFactor: true}, {gen: 5, pos: 5, label: '父方祖父の母の母', row: 4, displayFactor: true},
-    {gen: 5, pos: 8, label: '父方祖母の父の父', row: 5, displayFactor: true}, {gen: 5, pos: 9, label: '父方祖母の父の母', row: 6, displayFactor: true},
-    {gen: 5, pos: 11, label: '父方祖母の母の父', row: 7, displayFactor: true}, {gen: 5, pos: 12, label: '父方祖母の母の母', row: 8, displayFactor: true},
-    {gen: 5, pos: 16, label: '母方祖父の父の父', row: 9, displayFactor: true}, {gen: 5, pos: 17, label: '母方祖父の父の母', row: 10, displayFactor: true},
-    {gen: 5, pos: 19, label: '母方祖父の母の父', row: 11, displayFactor: true}, {gen: 5, pos: 20, label: '母方祖父の母の母', row: 12, displayFactor: true},
-    {gen: 5, pos: 23, label: '母方祖母の父の父', row: 13, displayFactor: true}, {gen: 5, pos: 24, label: '母方祖母の父の母', row: 14, displayFactor: true},
-    {gen: 5, pos: 26, label: '母方祖母の母の父', row: 15, displayFactor: true}, {gen: 5, pos: 27, label: '母方祖母の母の母', row: 16, displayFactor: true}
+    {gen: 1, pos: 31, label: '本人', row: 1, displayFactor: false}, {gen: 2, pos: 15, label: '父', row: 1, displayFactor: true},
+    {gen: 2, pos: 30, label: '母', row: 9, displayFactor: true}, {gen: 3, pos: 7, label: '父方祖父', row: 1, displayFactor: true},
+    {gen: 3, pos: 14, label: '父方祖母', row: 5, displayFactor: true}, {gen: 3, pos: 22, label: '母方祖父', row: 9, displayFactor: true},
+    {gen: 3, pos: 29, label: '母方祖母', row: 13, displayFactor: true}, {gen: 4, pos: 3, label: '父方祖父の父', row: 1, displayFactor: true},
+    {gen: 4, pos: 6, label: '父方祖父の母', row: 3, displayFactor: true}, {gen: 4, pos: 10, label: '父方祖母の父', row: 5, displayFactor: true},
+    {gen: 4, pos: 13, label: '父方祖母の母', row: 7, displayFactor: true}, {gen: 4, pos: 18, label: '母方祖父の父', row: 9, displayFactor: true},
+    {gen: 4, pos: 21, label: '母方祖父の母', row: 11, displayFactor: true}, {gen: 4, pos: 25, label: '母方祖母の父', row: 13, displayFactor: true},
+    {gen: 4, pos: 28, label: '母方祖母の母', row: 15, displayFactor: true}, {gen: 5, pos: 1, label: '父方祖父の父の父', row: 1, displayFactor: true},
+    {gen: 5, pos: 2, label: '父方祖父の父の母', row: 2, displayFactor: true}, {gen: 5, pos: 4, label: '父方祖父の母の父', row: 3, displayFactor: true},
+    {gen: 5, pos: 5, label: '父方祖父の母の母', row: 4, displayFactor: true}, {gen: 5, pos: 8, label: '父方祖母の父の父', row: 5, displayFactor: true},
+    {gen: 5, pos: 9, label: '父方祖母の父の母', row: 6, displayFactor: true}, {gen: 5, pos: 11, label: '父方祖母の母の父', row: 7, displayFactor: true},
+    {gen: 5, pos: 12, label: '父方祖母の母の母', row: 8, displayFactor: true}, {gen: 5, pos: 16, label: '母方祖父の父の父', row: 9, displayFactor: true},
+    {gen: 5, pos: 17, label: '母方祖父の父の母', row: 10, displayFactor: true}, {gen: 5, pos: 19, label: '母方祖父の母の父', row: 11, displayFactor: true},
+    {gen: 5, pos: 20, label: '母方祖父の母の母', row: 12, displayFactor: true}, {gen: 5, pos: 23, label: '母方祖母の父の父', row: 13, displayFactor: true},
+    {gen: 5, pos: 24, label: '母方祖母の父の母', row: 14, displayFactor: true}, {gen: 5, pos: 26, label: '母方祖母の母の父', row: 15, displayFactor: true},
+    {gen: 5, pos: 27, label: '母方祖母の母の母', row: 16, displayFactor: true}
 ];
-const displayPositions = [
-    {pos: 31, label: '本人'}, {pos: 30, label: '母'}, {pos: 15, label: '父'},
-    {pos: 29, label: '母方祖母'}, {pos: 22, label: '母方祖父'},
-    {pos: 14, label: '父方祖母'}, {pos: 7, label: '父方祖父'}
-];
+const displayPositions = [31, 15, 30, 7, 14, 22, 29];
 const factorTypes = ['芝', 'ダート', '短距離', 'マイル', '中距離', '長距離', '逃げ', '先行', '差し', '追込'];
 const aptitudeRanks = ['G', 'F', 'E', 'D', 'C', 'B', 'A'];
 let horseData = [];
@@ -105,7 +77,7 @@ function createPedigreeGrid() {
         }
         if (p.pos === 22) content += `<button type="button" class="copy-button" data-action="copyGrandfather">父方祖父系統からコピー</button>`;
         else if (p.pos === 29) content += `<button type="button" class="copy-button" data-action="copyGrandmother">父方祖母系統からコピー</button>`;
-        if (displayPositions.some(dp => dp.pos === p.pos)) content += `<div id="aptitude_${p.pos}" class="aptitude-display"></div>`;
+        if (displayPositions.includes(p.pos)) content += `<div id="aptitude_${p.pos}" class="aptitude-display"></div>`;
         cell.innerHTML = content;
         container.appendChild(cell);
     });
@@ -180,7 +152,7 @@ function initializeDropdowns() {
 }
 
 function updateHorseSelection(pos, horseName) {
-    const isDisplay = displayPositions.some(dp => dp.pos == pos);
+    const isDisplay = displayPositions.includes(parseInt(pos));
     const aptDiv = document.getElementById('aptitude_' + pos);
     if (isDisplay && horseName) {
         const horse = horseData.find(h => h.名前 === horseName);
@@ -232,31 +204,27 @@ function copyPaternalBranch(fromPos, toPos) {
     branchMap[fromPos].forEach((from, i) => copyIndividualData(from, copyMap[toPos][i]));
 }
 
-// ★★★★★ コピー機能の修正箇所 ★★★★★
 function copyIndividualData(fromPos, toPos) {
     const fromInd = document.getElementById(`individual_${fromPos}`);
     const toInd = document.getElementById(`individual_${toPos}`);
     toInd.value = fromInd.value;
 
     const fromFactor = document.getElementById(`factor_${fromPos}`);
-    if(fromFactor){
-        const toFactor = document.getElementById(`factor_${toPos}`);
-        toFactor.value = fromFactor.value;
-    }
-
+    let fromFactorValue = '';
+    if (fromFactor) fromFactorValue = fromFactor.value;
+    
     const fromStar = document.querySelector(`input[name="stars_${fromPos}"]:checked`);
-    if (fromStar) {
-        const toStar = document.getElementById(`stars_${toPos}_${fromStar.value}`);
-        if(toStar) toStar.checked = true;
-    }
-    // changeイベントを発火させて適性表示などを更新する
-    toInd.dispatchEvent(new Event('change', { bubbles: true }));
-    // ただし、changeイベントは自動で最適な因子を選び直してしまうため、コピーした因子で上書きする
-    if(fromFactor){
-        document.getElementById(`factor_${toPos}`).value = fromFactor.value;
-    }
-}
+    let fromStarValue = '0';
+    if(fromStar) fromStarValue = fromStar.value;
 
+    toInd.dispatchEvent(new Event('change', { bubbles: true }));
+    
+    const toFactor = document.getElementById(`factor_${toPos}`);
+    if(toFactor) toFactor.value = fromFactorValue;
+
+    const toStar = document.getElementById(`stars_${toPos}_${fromStarValue}`);
+    if (toStar) toStar.checked = true;
+}
 
 function calculateAptitudes() {
     const formData = collectFormData();
@@ -304,45 +272,57 @@ function calculateGenePotential(pos, formData) {
 function displayResults(results) {
     const resultDiv = document.getElementById('results');
     if (!resultDiv) return;
+
     let html = '<h2>計算結果</h2><div class="results-pedigree-container">';
-    const resultLayout = [
-        {pos: 7, label: '父方祖父'}, {pos: 15, label: '父'}, {pos: 31, label: '本人'},
-        {pos: 14, label: '父方祖母'},
-        {pos: 22, label: '母方祖父'}, {pos: 30, label: '母'},
-        {pos: 29, label: '母方祖母'}
-    ];
-    let grid = Array(4).fill(0).map(() => Array(7).fill(null));
-    let col = 0;
-    // 祖父母
-    [7, 14, 22, 29].forEach((pos, i) => { grid[i][col] = {pos}; }); col++;
-    // 親
-    [15, 30].forEach((pos, i) => { grid[i*2][col] = {pos, rowSpan: 2}; }); col++;
-    // 本人
-    grid[0][col] = {pos: 31, rowSpan: 4};
-    
-    // Grid HTML生成
-    for(let r=0; r<4; r++){
-        for(let c=0; c<7; c++){
-            const cellData = grid[r][c];
-            if(cellData){
-                const p = inputPedigreePositions.find(ip => ip.pos === cellData.pos);
-                if (!p) continue;
-                const indRes = results.individuals[p.pos];
-                const name = indRes ? indRes.name.split('[')[0].trim() : '未指定';
-                const factor = (indRes && indRes.factor && indRes.stars > 0) ? `${indRes.factor}${indRes.stars}★` : '';
-                const style = `grid-column: ${c+1}; grid-row: ${r+1} / span ${cellData.rowSpan || 1};`;
-                html += `<div class="result-cell" style="${style}">`;
-                html += `<div class="pedigree-cell-title">${p.label}</div>`;
-                html += `<div class="individual-name">${name}</div>`;
-                if(factor) html += `<div class="factor-info">${factor}</div>`;
-                if(indRes){
-                    html += `<div class="aptitude-display" style="display:block;">${formatAptitudeTable(null, results.correctedAptitudes[p.pos], results.changes[p.pos])}</div>`;
-                    html += generateGenePotentialHTML(results.genePotentials[p.pos]);
-                }
-                html += '</div>';
-            }
+
+    const layoutMap = {
+        // gen, pos, col, row, rowSpan
+        1: { pos: 31, col: 1, row: 1, rowSpan: 16 },
+        2: [
+            { pos: 15, col: 2, row: 1, rowSpan: 8 },
+            { pos: 30, col: 2, row: 9, rowSpan: 8 }
+        ],
+        3: [
+            { pos: 7,  col: 3, row: 1, rowSpan: 4 }, { pos: 14, col: 3, row: 5, rowSpan: 4 },
+            { pos: 22, col: 3, row: 9, rowSpan: 4 }, { pos: 29, col: 3, row: 13, rowSpan: 4 }
+        ],
+        4: [
+            { pos: 3, col: 4, row: 1, rowSpan: 2 }, { pos: 6, col: 4, row: 3, rowSpan: 2 },
+            { pos: 10, col: 4, row: 5, rowSpan: 2 }, { pos: 13, col: 4, row: 7, rowSpan: 2 },
+            { pos: 18, col: 4, row: 9, rowSpan: 2 }, { pos: 21, col: 4, row: 11, rowSpan: 2 },
+            { pos: 25, col: 4, row: 13, rowSpan: 2 }, { pos: 28, col: 4, row: 15, rowSpan: 2 }
+        ],
+        5: [
+            { pos: 1, col: 5, row: 1, rowSpan: 1 }, { pos: 2, col: 5, row: 2, rowSpan: 1 },
+            { pos: 4, col: 5, row: 3, rowSpan: 1 }, { pos: 5, col: 5, row: 4, rowSpan: 1 },
+            { pos: 8, col: 5, row: 5, rowSpan: 1 }, { pos: 9, col: 5, row: 6, rowSpan: 1 },
+            { pos: 11, col: 5, row: 7, rowSpan: 1 }, { pos: 12, col: 5, row: 8, rowSpan: 1 },
+            { pos: 16, col: 5, row: 9, rowSpan: 1 }, { pos: 17, col: 5, row: 10, rowSpan: 1 },
+            { pos: 19, col: 5, row: 11, rowSpan: 1 }, { pos: 20, col: 5, row: 12, rowSpan: 1 },
+            { pos: 23, col: 5, row: 13, rowSpan: 1 }, { pos: 24, col: 5, row: 14, rowSpan: 1 },
+            { pos: 26, col: 5, row: 15, rowSpan: 1 }, { pos: 27, col: 5, row: 16, rowSpan: 1 }
+        ]
+    };
+
+    [layoutMap[1], ...layoutMap[2], ...layoutMap[3], ...layoutMap[4], ...layoutMap[5]].forEach(p => {
+        const individual = results.individuals[p.pos];
+        const name = individual ? individual.name.split('[')[0].trim() : '未指定';
+        const factor = (individual && individual.factor && individual.stars > 0) ? `${individual.factor}${individual.stars}★` : '';
+        const style = `grid-column: ${p.col}; grid-row: ${p.row} / span ${p.rowSpan};`;
+
+        html += `<div class="result-cell" style="${style}">`;
+        html += `<div class="individual-name">${name}</div>`;
+        if (factor) html += `<div class="factor-info">${factor}</div>`;
+
+        // 本人、親、祖父母のみ詳細情報を表示
+        const originalData = inputPedigreePositions.find(ip => ip.pos === p.pos);
+        if (individual && originalData && originalData.gen <= 3) {
+            html += `<div class="aptitude-display" style="display:block;">${formatAptitudeTable(results.correctedAptitudes[p.pos], results.changes[p.pos])}</div>`;
+            html += generateGenePotentialHTML(results.genePotentials[p.pos]);
         }
-    }
+        html += '</div>';
+    });
+
     html += '</div>'; // .results-pedigree-container
     html += `<div class="calculation-info"><h3>補足</h3><ul>` +
             `<li><b>適性補正:</b> 1・2代前の因子☆1/4/7/10個で適性が1/2/3/4段階UP (A上限)。<span style="color:red; font-weight:bold;">赤字</span>は上昇した項目。</li>` +
@@ -352,7 +332,7 @@ function displayResults(results) {
     resultDiv.style.display = 'block';
 }
 
-function formatAptitudeTable(_, correctedApt, changes) {
+function formatAptitudeTable(correctedApt, changes) {
     if (!correctedApt) return '';
     let html = '';
     const groups = [['芝', 'ダ'], ['短', 'マ', '中', '長'], ['逃', '先', '差', '追']];

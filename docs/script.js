@@ -16,6 +16,14 @@ document.addEventListener('DOMContentLoaded', async function() {
     let horseData = [];
     const LOCAL_STORAGE_KEY = 'umamusumePedigreeData';
 
+    // 子から親のポジションを引くためのマップ
+    const childToParentsMap = {
+        31: [15, 30], 15: [7, 14], 30: [22, 29],
+        7: [3, 6], 14: [10, 13], 22: [18, 21], 29: [25, 28],
+        3: [1, 2], 6: [4, 5], 10: [8, 9], 13: [11, 12],
+        18: [16, 17], 21: [19, 20], 25: [23, 24], 28: [26, 27]
+    };
+
     async function loadCSV() {
         const response = await fetch('umadata.csv');
         if (!response.ok) throw new Error('CSVの読み込みに失敗しました。');
@@ -47,9 +55,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             let span = 1;
             if (p.gen === 1) span = 16; else if (p.gen === 2) span = 8; else if (p.gen === 3) span = 4; else if (p.gen === 4) span = 2;
             cell.style.gridRow = `${p.row} / span ${span}`;
-            // ★★★★★ 修正箇所 ★★★★★
-            // 世代(gen)に基づいて正しい列(column)を設定
-            cell.style.gridColumn = p.gen;
+            cell.style.gridColumn = 6 - p.gen;
             
             let content = `<div class="pedigree-cell-title"></div>`;
             content += `<select class="individual-select" data-position="${p.pos}"><option value="">選択してください</option></select>`;
@@ -209,6 +215,27 @@ document.addEventListener('DOMContentLoaded', async function() {
         return html;
     }
 
+    // ★★★★★ 修正箇所 ★★★★★
+    // 特定の位置のウマ娘の、全ての祖先を取得するヘルパー関数
+    function getAncestorPositions(startPos) {
+        const ancestors = new Set();
+        const queue = [startPos];
+        const visited = new Set();
+
+        while (queue.length > 0) {
+            const currentPos = queue.shift();
+            if (visited.has(currentPos)) continue;
+            visited.add(currentPos);
+
+            const parentPositions = childToParentsMap[currentPos] || [];
+            for (const parentPos of parentPositions) {
+                ancestors.add(parentPos);
+                queue.push(parentPos);
+            }
+        }
+        return Array.from(ancestors);
+    }
+
     function calculate() {
         const resultsContainer = document.getElementById('resultsContainer');
         resultsContainer.style.display = 'block';
@@ -227,40 +254,15 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         });
 
-        const factorCounts = {};
-        factorTypes.forEach(type => factorCounts[type] = 0);
-        inputPedigreePositions.forEach(p => {
-            if (p.displayFactor && formData['factor_' + p.pos] && formData['star_' + p.pos]) {
-                factorCounts[formData['factor_' + p.pos]] += parseInt(formData['star_' + p.pos], 10);
-            }
-        });
-        
-        const mainHorseData = horseData.find(h => h['名前'] === formData['horse_31']);
-
-        const calculatedRanksForMain = {};
-        if (mainHorseData) {
-            factorTypes.forEach(type => {
-                const baseRankIndex = aptitudeRanks.indexOf(mainHorseData[type] || 'G');
-                let increase = 0;
-                const stars = factorCounts[type];
-                if (stars >= 10) increase = 4; else if (stars >= 7) increase = 3; else if (stars >= 4) increase = 2; else if (stars >= 1) increase = 1;
-                const newRankIndex = Math.min(baseRankIndex + increase, aptitudeRanks.length - 1);
-                calculatedRanksForMain[type] = {
-                    final: aptitudeRanks[newRankIndex],
-                    changed: newRankIndex > baseRankIndex
-                };
-            });
-        }
-        
+        // ★★★★★ 修正箇所 ★★★★★
+        // メインの計算表示ループ
         inputPedigreePositions.forEach(p => {
             const cell = document.createElement('div');
             cell.className = `result-cell gen${p.gen}`;
             let span = 1;
             if (p.gen === 1) span = 16; else if (p.gen === 2) span = 8; else if (p.gen === 3) span = 4; else if (p.gen === 4) span = 2;
             cell.style.gridRow = `${p.row} / span ${span}`;
-            // ★★★★★ 修正箇所 ★★★★★
-            // 世代(gen)に基づいて正しい列(column)を設定
-            cell.style.gridColumn = p.gen;
+            cell.style.gridColumn = 6 - p.gen;
             
             const horseName = formData['horse_' + p.pos];
             let nameHTML = `<div class="individual-name">${horseName || (p.pos === 31 ? '未指定' : '')}</div>`;
@@ -269,16 +271,45 @@ document.addEventListener('DOMContentLoaded', async function() {
             let factorHTML = (p.displayFactor && factor && star) ? `<div class="factor-info">${factor} ☆${star}</div>` : '<div class="factor-info-placeholder"></div>';
             let tableHTML = '';
             let geneHTML = '';
-
+            
+            // 3代目まで（本人・親・祖父母）は適性計算と遺伝子可能性計算を行う
             if (p.gen <= 3) {
-                if (p.pos === 31) {
-                    tableHTML = createAptitudeTableHTML(horseName, calculatedRanksForMain);
-                } else {
-                    tableHTML = createAptitudeTableHTML(horseName);
+                const horseDataEntry = horseData.find(h => h['名前'] === horseName);
+                let calculatedRanks = {};
+
+                if (horseDataEntry) {
+                    // このウマ娘の祖先を取得
+                    const ancestorPositions = getAncestorPositions(p.pos);
+                    // 祖先からの因子を集計
+                    const factorCounts = {};
+                    factorTypes.forEach(type => factorCounts[type] = 0);
+                    ancestorPositions.forEach(ancPos => {
+                        const ancFactor = formData['factor_' + ancPos];
+                        const ancStar = formData['star_' + ancPos];
+                        if (ancFactor && ancStar) {
+                            factorCounts[ancFactor] += parseInt(ancStar, 10);
+                        }
+                    });
+
+                    // 適性向上を計算
+                    factorTypes.forEach(type => {
+                        const baseRankIndex = aptitudeRanks.indexOf(horseDataEntry[type] || 'G');
+                        let increase = 0;
+                        const stars = factorCounts[type] || 0;
+                        if (stars >= 10) increase = 4; else if (stars >= 7) increase = 3; else if (stars >= 4) increase = 2; else if (stars >= 1) increase = 1;
+                        const newRankIndex = Math.min(baseRankIndex + increase, aptitudeRanks.length - 1);
+                        calculatedRanks[type] = {
+                            final: aptitudeRanks[newRankIndex],
+                            changed: newRankIndex > baseRankIndex
+                        };
+                    });
                 }
+                
+                tableHTML = createAptitudeTableHTML(horseName, calculatedRanks);
                 const genePotentials = calculateGenePotential(p.pos, formData);
                 geneHTML = generateGenePotentialHTML(genePotentials);
-            } else {
+
+            } else { // 4, 5代目はプレースホルダー
                 tableHTML = '<div class="aptitude-table-placeholder"></div>';
                 geneHTML = '<div class="gene-potentials-placeholder"></div>';
             }

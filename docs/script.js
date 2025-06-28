@@ -93,7 +93,7 @@ function createPedigreeGrid() {
         
         cell.style.gridRow = p.row + ' / span ' + span;
         
-        let content = `<div class="pedigree-cell-title"></div>`;
+        let content = `<div class="pedigree-cell-title">${p.label}</div>`;
         
         if (p.displayFactor) {
             content += `<select class="individual-select" data-position="${p.pos}">
@@ -113,7 +113,7 @@ function createPedigreeGrid() {
             }
             content += `</div>`;
             
-            // 修正: 4代目・5代目は適性表示なし
+            // 4代目・5代目は適性表示なし
             if (p.gen <= 3) {
                 content += `<div class="aptitude-display" data-position="${p.pos}"></div>`;
             }
@@ -124,7 +124,6 @@ function createPedigreeGrid() {
             content += `<div class="aptitude-display" data-position="${p.pos}"></div>`;
         }
         
-        // 修正: ボタン名を「父方からコピー」に変更
         if (p.pos === 22 || p.pos === 29) {
             content += `<button class="copy-button" data-position="${p.pos}">父方からコピー</button>`;
         }
@@ -160,7 +159,7 @@ function updateAptitudeDisplay(select) {
     if (selectedHorse) {
         const horseData_item = horseData.find(h => h['名前'] === selectedHorse);
         if (horseData_item) {
-            // 修正: 3段組の適性表示
+            // 修正: 3段6行の適性表示
             let html = '<table class="aptitude-table">';
             
             // 1段目: 芝・ダート
@@ -208,26 +207,23 @@ function setupCopyButtons() {
 
 function copyPedigreeData(sourcePosition) {
     // 修正: 正しいコピー機能の実装
+    let sourcePositions = [];
     let targetPositions = [];
     
     if (sourcePosition === 22) { // 母方祖父
-        // 父方祖父とその2代前まで（7人分）
+        // 母方祖父系統の7人分
+        sourcePositions = [22, 18, 21, 16, 17, 19, 20];
+        // 父方祖父系統の7人分
         targetPositions = [7, 3, 6, 1, 2, 4, 5];
     } else if (sourcePosition === 29) { // 母方祖母
-        // 父方祖母とその2代前まで（7人分）
+        // 母方祖母系統の7人分
+        sourcePositions = [29, 25, 28, 23, 24, 26, 27];
+        // 父方祖母系統の7人分
         targetPositions = [14, 10, 13, 8, 9, 11, 12];
     }
     
-    // 対応する母方のpositionを取得
-    let sourcePositions = [];
-    if (sourcePosition === 22) { // 母方祖父
-        sourcePositions = [22, 18, 21, 16, 17, 19, 20];
-    } else if (sourcePosition === 29) { // 母方祖母
-        sourcePositions = [29, 25, 28, 23, 24, 26, 27];
-    }
-    
     // コピー実行
-    for (let i = 0; i < targetPositions.length && i < sourcePositions.length; i++) {
+    for (let i = 0; i < sourcePositions.length && i < targetPositions.length; i++) {
         const sourceCell = document.querySelector(`[data-position="${sourcePositions[i]}"]`);
         const targetCell = document.querySelector(`[data-position="${targetPositions[i]}"]`);
         
@@ -392,7 +388,7 @@ function displayResults(results, targetHorse) {
                 const aptitudeTable = document.createElement('table');
                 aptitudeTable.className = 'aptitude-table';
                 
-                // 修正: 結果表示も3段組に変更
+                // 修正: 結果表示も3段6行に変更
                 let html = '';
                 
                 // 1段目: 芝・ダート
@@ -414,7 +410,7 @@ function displayResults(results, targetHorse) {
                 });
                 html += '</tr>';
                 
-                // 2段目: 短・マ・中・長
+                // 2段目: 短・マ
                 html += '<tr>';
                 ['短距離', 'マイル'].forEach(type => {
                     let rank;
@@ -432,6 +428,8 @@ function displayResults(results, targetHorse) {
                     html += `<td class="apt-label">${label}</td><td class="${cellClass}">${rank}</td>`;
                 });
                 html += '</tr>';
+                
+                // 3段目: 中・長
                 html += '<tr>';
                 ['中距離', '長距離'].forEach(type => {
                     let rank;
@@ -450,7 +448,7 @@ function displayResults(results, targetHorse) {
                 });
                 html += '</tr>';
                 
-                // 3段目: 逃・先・差・追
+                // 4段目: 逃・先
                 html += '<tr>';
                 ['逃げ', '先行'].forEach(type => {
                     let rank;
@@ -468,6 +466,8 @@ function displayResults(results, targetHorse) {
                     html += `<td class="apt-label">${label}</td><td class="${cellClass}">${rank}</td>`;
                 });
                 html += '</tr>';
+                
+                // 5段目: 差・追
                 html += '<tr>';
                 ['差し', '追込'].forEach(type => {
                     let rank;

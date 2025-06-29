@@ -64,7 +64,7 @@ button:hover { background-color: #0056b3; }
     display: flex;
     flex-direction: column;
     gap: clamp(4px, 0.8vw, 8px);
-    min-width: 110px;
+    min-width: 10px;
 }
 
 select, .individual-select, .factor-select {
@@ -107,7 +107,7 @@ select, .individual-select, .factor-select {
 .result-cell {
     padding: 2px;
     gap: 0;
-    min-width: 110px;
+    min-width: 10px;
 }
 
 .result-cell .individual-name {

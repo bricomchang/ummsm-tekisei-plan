@@ -275,8 +275,10 @@ document.addEventListener('DOMContentLoaded', async function() {
                     });
                 }
                 tableHTML = createAptitudeTableHTML(horseName, calculatedRanks);
+                if (p.gen >= 2) {
                 const genePotentials = calculateGenePotential(p.pos, formData);
                 geneHTML = generateGenePotentialHTML(genePotentials);
+                }
             }
             
             cell.innerHTML = nameHTML + factorHTML + tableHTML + geneHTML;

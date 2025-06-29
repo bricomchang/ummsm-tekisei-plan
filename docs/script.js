@@ -242,7 +242,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             const cell = document.createElement('div');
             cell.className = `result-cell gen${p.gen}`;
             if (sirePositions.has(p.pos)) {
-                cell.classList.add('sire-line');
+            cell.classList.add('sire-line');
             } else if (damPositions.has(p.pos)) {
                 cell.classList.add('dam-line');
             }
@@ -250,7 +250,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (p.gen === 1) span = 16; else if (p.gen === 2) span = 8; else if (p.gen === 3) span = 4; else if (p.gen === 4) span = 2;
             cell.style.gridRow = `${p.row} / span ${span}`;
             cell.style.gridColumn = p.gen;
-            
             const horseName = formData['horse_' + p.pos];
             let nameHTML = `<div class="individual-name">${horseName || (p.pos === 31 ? '未指定' : '')}</div>`;
             const factor = formData['factor_' + p.pos];

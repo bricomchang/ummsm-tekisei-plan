@@ -67,12 +67,12 @@ button:hover { background-color: #0056b3; }
     min-width: 10px;
 }
 
-.pedigree-cell.sire-line {
-    background-color: #cce5ff; /* 薄青 */
+.sire-line {
+    background-color: #eaf4ff; /* 薄青 */
 }
 
-.pedigree-cell.dam-line {
-    background-color: #ffcfdf; /* 淡桃 */
+.dam-line {
+    background-color: #fff0f5; /* 淡桃 */
 }
 
 select, .individual-select, .factor-select {

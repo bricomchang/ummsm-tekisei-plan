@@ -67,6 +67,14 @@ button:hover { background-color: #0056b3; }
     min-width: 10px;
 }
 
+.pedigree-cell.sire-line {
+    background-color: #a4d0ff; /* 薄青 */
+}
+
+.pedigree-cell.dam-line {
+    background-color: #ffacc8; /* 淡桃 */
+}
+
 select, .individual-select, .factor-select {
     width: 100%;
     padding: clamp(4px, 0.8vw, 5px);

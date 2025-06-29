@@ -107,7 +107,7 @@ select, .individual-select, .factor-select {
 .result-cell {
     padding: 2px;
     gap: 0;
-    min-width: 220px;
+    min-width: 110px;
 }
 
 .result-cell .individual-name {

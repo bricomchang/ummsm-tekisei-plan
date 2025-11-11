@@ -1,3 +1,5 @@
+//散らかり放題なので見ないでくださいね！
+
 document.addEventListener('DOMContentLoaded', async function() {
     // 定数定義
     const inputPedigreePositions = [

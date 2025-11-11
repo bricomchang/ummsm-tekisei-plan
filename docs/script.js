@@ -600,7 +600,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             
             cell.innerHTML = nameHTML + factorHTML + tableHTML + geneHTML;
             resultsGrid.appendChild(cell);
-            renderShareBlock(makeShareURL());
+//            renderShareBlock(makeShareURL());
         });
     }
     
@@ -629,13 +629,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         horseData = await loadCSV();
         createPedigreeGrid();
         initializeDropdowns();
-        const restored = tryRestoreFromURL();
-        if (!restored) {
-        if (typeof loadState === 'function') loadState(); // URLが無い時だけ従来の保存を使う
-        calculate();
-        }
+        loadState();
         setupEventListeners();
-
     } catch (error) {
         console.error('アプリケーションの初期化に失敗しました:', error);
         alert('アプリケーションの初期化に失敗しました。ページを再読み込みしてください。');

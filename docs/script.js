@@ -17,10 +17,11 @@ document.addEventListener('DOMContentLoaded', async function() {
     let horseData = [];
     const LOCAL_STORAGE_KEY = 'umamusumePedigreeData';
 
-        // --- 共有用: URL圧縮ライブラリ（LZStringのURL向け最小版） ---
+    // ------- 共有用ユーティリティ（URLだけで完全再現） -------
+    const SHARE_PARAM = 's';
+
+    // LZString（URL向けエンコード版の最小実装）
     const LZString = (function(){
-    // 以下は compressToEncodedURIComponent / decompressFromEncodedURIComponent の必要最低限実装
-    // https://github.com/pieroxy/lz-string から該当部を最小抽出（ライセンス: MIT）
     const f = String.fromCharCode;
     const keyStrUriSafe = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-$";
     const baseReverseDic = {};
@@ -201,63 +202,61 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     };
     })();
-    // --- /LZString ---
 
-    const SHARE_PARAM = 's';
-
-    // 入力状態 → 共有用オブジェクト
-    function serializeStateForShare() {
-    const state = { v: 1, h: [], f: [] }; // h: 馬（pos, horseIndex）, f: 因子+星（pos, factorIndex, star）
-    inputPedigreePositions.forEach(p => {
-        const pos = p.pos;
+    // 入力を完全スナップショット化（全posを含める）
+    function serializeAllInputs() {
+    const allPos = inputPedigreePositions.map(p => p.pos);
+    const horses = {};
+    const factors = {};
+    allPos.forEach(pos => {
         const sel = document.querySelector(`.individual-select[data-position="${pos}"]`);
-        if (sel && sel.value) {
-        const idx = horseData.findIndex(h => h['名前'] === sel.value);
-        if (idx >= 0) state.h.push([pos, idx]);
-        }
-        if (p.displayFactor) {
+        horses[pos] = sel && sel.value ? sel.value : null;
+
         const fsel = document.querySelector(`.factor-select[data-position="${pos}"]`);
         const star = document.querySelector(`input[name="stars${pos}"]:checked`);
-        if (fsel && star) {
-            const fi = factorTypes.indexOf(fsel.value);
-            const sv = parseInt(star.value || '0', 10) || 0;
-            if (fi >= 0) state.f.push([pos, fi, sv]);
-        }
-        }
+        factors[pos] = {
+        type: fsel && fsel.value ? fsel.value : null,
+        star: star ? parseInt(star.value, 10) : null
+        };
     });
-    return state;
+    return { v: 1, horses, factors };
     }
 
-    // 共有オブジェクト → 入力UIへ反映
-    function applySharedState(obj) {
-    if (!obj || obj.v !== 1) return;
-    // 馬の選択
-    if (Array.isArray(obj.h)) {
-        obj.h.forEach(([pos, idx]) => {
-        const name = horseData[idx]?.['名前'];
-        if (!name) return;
+    // URL→UIへ復元（localStorageは使わない）
+    function applyAllInputsFromObj(obj) {
+    if (!obj || obj.v !== 1) return false;
+
+    // 馬
+    Object.entries(obj.horses || {}).forEach(([pos, name]) => {
         const sel = document.querySelector(`.individual-select[data-position="${pos}"]`);
-        if (sel) sel.value = name;
-        if (String(pos).length && typeof pos === 'number' && ~~pos === pos && pos >= 1 && pos <= 31) {
-            if ([7, 14, 22, 29].includes(pos)) updateAptitudeDisplay(pos); // 第3世代表示更新
-        }
-        });
-    }
-    // 因子と星
-    if (Array.isArray(obj.f)) {
-        obj.f.forEach(([pos, fi, sv]) => {
+        if (sel) sel.value = name ?? "";
+    });
+
+    // 因子
+    Object.entries(obj.factors || {}).forEach(([pos, spec]) => {
         const fsel = document.querySelector(`.factor-select[data-position="${pos}"]`);
-        if (fsel && factorTypes[fi]) fsel.value = factorTypes[fi];
+        if (fsel) fsel.value = spec?.type ?? "";
+        const sv = spec?.star;
+        if (sv != null) {
         const radio = document.querySelector(`input[name="stars${pos}"][value="${sv}"]`);
         if (radio) radio.checked = true;
-        });
-    }
-    saveState(); // 既存のlocalStorageにも反映
+        } else {
+        const checked = document.querySelector(`input[name="stars${pos}"]:checked`);
+        if (checked) checked.checked = false;
+        }
+    });
+
+    // 必要な派生UI更新
+    inputPedigreePositions.forEach(p => {
+        if ([7, 14, 22, 29].includes(p.pos)) updateAptitudeDisplay(p.pos);
+    });
+
+    return true;
     }
 
     // 共有URL生成
     function makeShareURL() {
-    const payload = serializeStateForShare();
+    const payload = serializeAllInputs();
     const json = JSON.stringify(payload);
     const compressed = LZString.compressToEncodedURIComponent(json);
     const url = new URL(location.href);
@@ -266,7 +265,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     return url.toString();
     }
 
-    // 共有UI描画（結果の下に表示）
+    // 結果の下に表示＋コピー
     function renderShareBlock(url) {
     const container = document.getElementById('resultsContainer');
     if (!container) return;
@@ -288,12 +287,11 @@ document.addEventListener('DOMContentLoaded', async function() {
         btn.id = 'copyShare';
         btn.textContent = 'コピー';
         btn.addEventListener('click', async () => {
-        const v = input.value;
         try {
-            await navigator.clipboard.writeText(v);
+            await navigator.clipboard.writeText(input.value);
             btn.textContent = 'コピー済み';
             setTimeout(() => (btn.textContent = 'コピー'), 1200);
-        } catch (e) {
+        } catch {
             input.select();
             document.execCommand('copy');
         }
@@ -308,7 +306,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     if (input) input.value = url;
     }
 
-    // 起動時に?s=があれば復元
+    // 起動時にURLがあればそれのみで復元し、なければ従来処理
     function tryRestoreFromURL() {
     const params = new URL(location.href).searchParams;
     const s = params.get(SHARE_PARAM);
@@ -317,13 +315,15 @@ document.addEventListener('DOMContentLoaded', async function() {
         const json = LZString.decompressFromEncodedURIComponent(s);
         if (!json) return false;
         const obj = JSON.parse(json);
-        applySharedState(obj);
-        return true;
+        const ok = applyAllInputsFromObj(obj);
+        if (ok && typeof calculate === 'function') calculate();
+        return ok;
     } catch (e) {
         console.error('共有URLの読み込みに失敗:', e);
         return false;
     }
     }
+
     async function loadCSV() {
         const response = await fetch('umadata.csv');
         if (!response.ok) throw new Error('CSVの読み込みに失敗しました。');
@@ -629,12 +629,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         horseData = await loadCSV();
         createPedigreeGrid();
         initializeDropdowns();
-        loadState();
-        setupEventListeners();
         const restored = tryRestoreFromURL();
-        if (restored) {
-            calculate();
+        if (!restored) {
+        if (typeof loadState === 'function') loadState(); // URLが無い時だけ従来の保存を使う
+        calculate();
         }
+        setupEventListeners();
+
     } catch (error) {
         console.error('アプリケーションの初期化に失敗しました:', error);
         alert('アプリケーションの初期化に失敗しました。ページを再読み込みしてください。');

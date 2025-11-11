@@ -152,3 +152,21 @@ select, .individual-select, .factor-select {
 .gene-potentials-placeholder {
     height: 40px; /* 未選択の際に高さを維持するための仮の高さ */
 }
+
+/* 共有ブロック */
+.share-block {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.share-block input#shareUrl {
+  flex: 1;
+  min-width: 200px;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.share-block button#copyShare {
+  padding: 6px 10px;
+}
